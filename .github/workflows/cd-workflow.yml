@@ -1,0 +1,78 @@
+name: CD with Gradle and Docker
+
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: ☕️ set up JDK 17        # 프로젝트의 java 버전에 맞추어 설정
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          server-id: github
+          setting-path: ${{ github.workspace }}
+
+      - name: "👏🏻 grant execute permission for gradlew"
+        run: chmod +x gradlew
+
+      - name: "🐘 build with Gradle (without test)"
+        run: ./gradlew clean build -x test --stacktrace
+
+      - name: "🐳 Docker login"
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: "🐳 Docker build & push"
+        run:  |
+          docker build -f Dockerfile \
+            -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }} .
+
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
+          
+      # AWS 인증
+      - name: AWS configure credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+
+      - name: "🚀 deploy to server"
+        run: |
+          aws ssm send-command \
+            --instance-ids "${{ secrets.AWS_EC2_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Deploying application" \
+            --parameters 'commands=[
+              "sudo docker stop NMRADER_CONTAINER || true",
+              "sudo docker rm NMRADER_CONTAINER || true",
+              "sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}",
+              "sudo docker run -d -p 8080:8080 --name NMRADER_CONTAINER \
+                -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \
+                -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} \
+                -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL }} \
+                -e DATASOURCE_URL_DEV=${{ secrets.DATASOURCE_URL_DEV }} \
+                -e SPRING_PROFILES_ACTIVE=dev \
+                -e AWS_S3_BUCKET_ACCESS_KEY=${{ secrets.AWS_S3_BUCKET_ACCESS_KEY }} \
+                -e AWS_S3_BUCKET_SECRET_KEY=${{ secrets.AWS_S3_BUCKET_SECRET_KEY }} \
+                -e AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }} \
+                -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+                -e JWT_EXPIRED_IN=${{ secrets.JWT_EXPIRED_IN }} \
+                -e JWT_REFRESH_EXPIRED_IN=${{ secrets.JWT_REFRESH_EXPIRED_IN }} \
+                ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}",
+              "sudo docker image prune -f"
+            ]' \
+            --output text
