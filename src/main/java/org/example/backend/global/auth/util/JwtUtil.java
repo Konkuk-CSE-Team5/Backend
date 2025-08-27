@@ -48,6 +48,8 @@ public class JwtUtil {
             throw new JwtExpiredException(EXPIRED_JWT);
         } catch (UnsupportedJwtException e) {
             throw new InvalidJwtException(INVALID_JWT);
+        } catch (SecurityException | SignatureException e) {
+            throw new InvalidJwtException(INVALID_JWT);
         } catch (IllegalArgumentException e) {
             throw new JwtNotFoundException(JWT_NOT_FOUND);
         }
