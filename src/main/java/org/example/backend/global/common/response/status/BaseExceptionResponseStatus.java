@@ -5,21 +5,21 @@ import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
 public enum BaseExceptionResponseStatus implements ResponseStatus{
-    // 성공
-    SUCCESS(HttpStatus.OK.value(), 200, "요청에 성공했습니다."),
+    // 1000 : 성공
+    SUCCESS(HttpStatus.OK.value(), 1000, "요청에 성공했습니다."),
 
-    // 공통 에러
-    BAD_REQUEST(HttpStatus.BAD_REQUEST.value(),400, "유효하지 않은 요청입니다."),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED.value(), 401, "인증 자격이 없습니다."),
-    FORBIDDEN(HttpStatus.FORBIDDEN.value(), 403, "권한이 없습니다."),
-    API_NOT_FOUND(HttpStatus.NOT_FOUND.value(),404, "존재하지 않는 API입니다."),
-    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED.value(), 405, "유효하지 않은 Http 메서드입니다."),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 500, "서버 내부 오류입니다."),
+    // 2000 : 공통 에러
+    BAD_REQUEST(HttpStatus.BAD_REQUEST.value(),2000, "유효하지 않은 요청입니다."),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED.value(), 2001, "인증 자격이 없습니다."),
+    FORBIDDEN(HttpStatus.FORBIDDEN.value(), 2002, "권한이 없습니다."),
+    API_NOT_FOUND(HttpStatus.NOT_FOUND.value(),2003, "존재하지 않는 API입니다."),
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED.value(), 2004, "유효하지 않은 Http 메서드입니다."),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 2005, "서버 내부 오류입니다."),
 
-    // JWT 토큰
-    INVALID_JWT(HttpStatus.UNAUTHORIZED.value(), 401, "올바르지 않은 토큰입니다."),
-    EXPIRED_JWT(HttpStatus.UNAUTHORIZED.value(), 401, "만료된 토큰입니다"),
-    JWT_NOT_FOUND(HttpStatus.UNAUTHORIZED.value(), 400, "토큰을 찾을 수 없습니다");
+    // 2100 : JWT 토큰 에러
+    INVALID_JWT(HttpStatus.UNAUTHORIZED.value(), 2100, "올바르지 않은 토큰입니다."),
+    EXPIRED_JWT(HttpStatus.UNAUTHORIZED.value(), 2101, "만료된 토큰입니다"),
+    JWT_NOT_FOUND(HttpStatus.UNAUTHORIZED.value(), 2102, "토큰을 찾을 수 없습니다");
 
 
     private final int status;
