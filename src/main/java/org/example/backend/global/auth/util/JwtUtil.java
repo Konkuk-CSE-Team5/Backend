@@ -3,7 +3,6 @@ package org.example.backend.global.auth.util;
 
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.example.backend.domain.users.model.Role;
 import org.example.backend.global.auth.exception.InvalidJwtException;
 import org.example.backend.global.auth.exception.JwtExpiredException;
 import org.example.backend.global.auth.exception.JwtNotFoundException;
@@ -22,15 +21,16 @@ import static org.example.backend.global.common.response.status.BaseExceptionRes
 public class JwtUtil {
     private final SecretKey secretKey;
 
-    @Value("${onit.jwt.access.expire-ms}")
+    @Value("${secret.jwt-expired-in}")
     private long accessTokenExpireMs;
 
-    public JwtUtil(@Value("${onit.jwt.secret-key}") String secret) {
+    public JwtUtil(@Value("${secret.jwt-secret-key}") String secret) {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    public String createAccessToken(Long userId, Role role) {
+    public String createAccessToken(String email, Long userId) {
         return Jwts.builder()
+                .claim(JwtClaimKey.EMAIL.getKey(), email)
                 .claim(JwtClaimKey.USER_ID.getKey(), userId)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpireMs))

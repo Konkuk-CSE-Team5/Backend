@@ -2,6 +2,7 @@ package org.example.backend.global.auth.util;
 
 public enum JwtClaimKey {
     USER_ID("userId"),
+    EMAIL("email"),
     ROLE("role");
     private String key;
 
