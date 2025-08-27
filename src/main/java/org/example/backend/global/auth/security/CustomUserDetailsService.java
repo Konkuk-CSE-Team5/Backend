@@ -15,14 +15,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username)
+        return userRepository.findByUsername(username)
                 .map(user ->{
                     log.info("[loadUserByUsername] User was found. user = {}",  user);
                     return new CustomUserDetails(user);
                 })
                 .orElseThrow(() -> {
-                    log.info("[loadUserByUsername] User with email {} cannot found!!", username );
-                    throw new UsernameNotFoundException("User with email " + username + " cannot found!!");
+                    log.info("[loadUserByUsername] User with username {} cannot found!!", username );
+                    throw new UsernameNotFoundException("User with username " + username + " cannot found!!");
                 });
     }
 }
