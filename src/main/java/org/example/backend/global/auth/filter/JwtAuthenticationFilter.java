@@ -40,11 +40,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try{
                 Claims claims = jwtUtil.validateJwt(token);
 
-                // UserDetails 생성
-                Long userId = claims.get(JwtClaimKey.USER_ID.getKey(), Long.class);
-
                 // userDetails 조회
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(String.valueOf(userId));
+                String email = claims.get(JwtClaimKey.EMAIL.getKey(), String.class);
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
                 // 인증토큰을 생성하고 시큐리티 컨텍스트홀더에 저장
                 Authentication authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
