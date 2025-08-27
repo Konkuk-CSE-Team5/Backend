@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -64,6 +65,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             catch(JwtNotFoundException e){
                 log.info("JWT claims string is empty.", e);
                 request.setAttribute(JWT_ERROR_CODE.getValue(), JwtErrorCode.JWT_NOT_FOUND_ERROR);
+            }
+            catch(UsernameNotFoundException e){
+                log.info("User not found for JWT subject/email.", e);
+                request.setAttribute(JWT_ERROR_CODE.getValue(), JwtErrorCode.INVALID_JWT_ERROR);
             }
         }
 
