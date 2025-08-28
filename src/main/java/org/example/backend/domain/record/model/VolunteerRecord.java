@@ -1,6 +1,7 @@
 package org.example.backend.domain.record.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.example.backend.domain.matching.model.Matching;
 import org.example.backend.domain.schedule.model.ScheduleDetail;
@@ -27,9 +28,11 @@ public class VolunteerRecord extends BaseEntity {
     @Column(nullable = false)
     private VolunteerRecordStatus volunteerRecordStatus;
 
+    @NotNull
     @Column(nullable = false)
     private LocalDate scheduledDate;
 
+    @NotNull
     @Column(nullable = false)
     private LocalTime scheduledTime;
 
@@ -48,4 +51,12 @@ public class VolunteerRecord extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "matching_id")
     private Matching matching;
+
+    public void updateTotalCallTime(Duration totalCallTime) {
+        this.totalCallTime = totalCallTime;
+    }
+
+    public void updateStatus(VolunteerRecordStatus status) {
+        this.volunteerRecordStatus = status;
+    }
 }

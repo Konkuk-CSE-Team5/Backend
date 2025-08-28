@@ -47,4 +47,9 @@ public interface VolunteerRecordRepository extends JpaRepository<VolunteerRecord
     int countByMatchingAndVolunteerRecordStatusAndScheduledDateGreaterThanEqualAndScheduledDateLessThan(
             Matching matching, VolunteerRecordStatus status,
             LocalDate monthStart, LocalDate monthEndExclusive);
+
+
+    // 특정 매칭 + 오늘 날짜에 해당하는 VolunteerRecord 조회
+    Optional<VolunteerRecord> findByMatchingAndScheduledDate(Matching matching, LocalDate scheduledDate);
+
 }

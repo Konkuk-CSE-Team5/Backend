@@ -6,6 +6,7 @@ import org.example.backend.global.common.model.BaseEntity;
 import org.example.backend.global.convertor.DurationToSecondsConverter;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -19,7 +20,7 @@ public class CallHistory extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private LocalTime startTime;
+    private LocalDateTime startTime;
 
     @Convert(converter = DurationToSecondsConverter.class)
     private Duration callTime;

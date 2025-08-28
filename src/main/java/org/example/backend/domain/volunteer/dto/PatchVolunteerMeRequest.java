@@ -7,8 +7,8 @@ import java.time.LocalDate;
 
 @Schema(description = "봉사자 프로필 수정 요청")
 public record PatchVolunteerMeRequest(
-        @Schema(description = "비밀번호(8~64자)", example = "ikhwan1234")
-        @jakarta.validation.constraints.Size(min = 8, max = 64)
+        @Schema(description = "비밀번호", example = "ikhwan1234")
+//        @jakarta.validation.constraints.Size(min = 8, max = 64)
         String password,
         @Schema(description = "이름", example = "홍길동")
         @jakarta.validation.constraints.NotBlank
