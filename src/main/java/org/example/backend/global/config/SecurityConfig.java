@@ -29,7 +29,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 
         http
-                .csrf((auth) -> auth.disable());
+                .csrf((auth) -> auth.disable())
+                .cors(cors -> cors.disable()); // CORS를 WebConfig에서 처리하도록 함
 
         http
                 .formLogin((auth)->auth.disable());

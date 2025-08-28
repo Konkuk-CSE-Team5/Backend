@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.Content;
@@ -45,6 +46,9 @@ public class SwaggerConfig {
         final String schemeName = "bearerAuth";
 
         return new OpenAPI()
+                // 서버 URL 설정 (다양한 환경 지원)
+                .addServersItem(new Server().url("/").description("Current server (Relative)"))
+                .addServersItem(new Server().url("http://localhost:8080").description("Local Development"))
                 // 전역 SecurityRequirement: 아래 스키마를 모든 API에 적용
                 .addSecurityItem(new SecurityRequirement().addList(schemeName))
                 // SecurityScheme 정의: Bearer JWT
