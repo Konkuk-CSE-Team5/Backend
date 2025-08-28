@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.backend.domain.volunteer.dto.GetVolunteerMeResponse;
-import org.example.backend.domain.volunteer.dto.PatchVolunteerMeResponse;
+import org.example.backend.domain.volunteer.dto.PatchVolunteerMeRequest;
 import org.example.backend.domain.volunteer.dto.RegisterVolunteerRequest;
 import org.example.backend.domain.volunteer.service.RegisterVolunteerService;
 import org.example.backend.domain.volunteer.service.VolunteerMeService;
@@ -28,7 +28,7 @@ import static org.example.backend.global.swagger.SwaggerResponseDescription.REGI
 @RestController
 public class VolunteerController {
     private final RegisterVolunteerService registerVolunteerService;
-    private final VolunteerMeService VolunteerMeService;
+    private final VolunteerMeService volunteerMeService;
 
     @Operation(
             summary = "봉사자 회원가입 API",
@@ -36,7 +36,7 @@ public class VolunteerController {
     )
     @CustomExceptionDescription(REGISTER)
     @PostMapping
-    public BaseResponse<Void> registerVolunteer(@RequestBody RegisterVolunteerRequest request){
+    public BaseResponse<Void> registerVolunteer(@RequestBody RegisterVolunteerRequest request) {
         registerVolunteerService.register(request);
         return new BaseResponse<>(null);
     }
@@ -47,8 +47,8 @@ public class VolunteerController {
     )
     @CustomExceptionDescription(DEFAULT)
     @GetMapping("me")
-    public BaseResponse<GetVolunteerMeResponse> getVolunteerMe(@LoginUserId @Parameter(hidden = true) Long loginUserId){
-        return new BaseResponse<>(VolunteerMeService.get(loginUserId));
+    public BaseResponse<GetVolunteerMeResponse> getVolunteerMe(@LoginUserId @Parameter(hidden = true) Long loginUserId) {
+        return new BaseResponse<>(volunteerMeService.get(loginUserId));
     }
 
     @Operation(
@@ -57,11 +57,12 @@ public class VolunteerController {
     )
     @CustomExceptionDescription(DEFAULT)
     @PatchMapping("profile")
-    public BaseResponse<Void> patchVolunteerMe(@LoginUserId @Parameter(hidden = true) Long loginUserId, PatchVolunteerMeResponse request){
-        VolunteerMeService.patch(loginUserId, request);
+    public BaseResponse<Void> patchVolunteerMe(
+            @LoginUserId @Parameter(hidden = true) Long loginUserId,
+            @RequestBody @jakarta.validation.Valid PatchVolunteerMeRequest request) {
+        volunteerMeService.patch(loginUserId, request);
         return new BaseResponse<>(null);
     }
-
 
 
 }

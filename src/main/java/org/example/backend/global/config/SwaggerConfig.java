@@ -55,6 +55,7 @@ public class SwaggerConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")   // (표시용)
+                                .description("Authorization 헤더에 'Bearer {JWT}' 형태로 전달")
                 ));
 //        return new OpenAPI();
     }
