@@ -17,4 +17,6 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
     List<Matching> findAllByVolunteer(Volunteer volunteer);
 
     List<Matching> findAllBySeniorAndMatchingStatus(Senior senior, MatchingStatus matchingStatus);
+    
+    Optional<Matching> findBySeniorAndMatchingStatus(Senior senior, MatchingStatus matchingStatus);
 }

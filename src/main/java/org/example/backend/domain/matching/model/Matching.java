@@ -7,7 +7,6 @@ import org.example.backend.domain.volunteer.model.Volunteer;
 import org.example.backend.global.common.model.BaseEntity;
 
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -18,7 +17,6 @@ public class Matching extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
     private MatchingStatus matchingStatus = MatchingStatus.ACTIVE;
 
     @ManyToOne
@@ -28,4 +26,29 @@ public class Matching extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "volunteer_id")
     private Volunteer volunteer;
+
+    public void updateMatchingStatus(MatchingStatus matchingStatus) {
+        this.matchingStatus = matchingStatus;
+    }
+
+    public void updateVolunteer(Volunteer volunteer) {
+        this.volunteer = volunteer;
+    }
+
+    // 정적 팩토리 메소드들
+    public static Matching createForSenior(Senior senior) {
+        Matching matching = new Matching();
+        matching.senior = senior;
+        matching.matchingStatus = MatchingStatus.ACTIVE;
+        matching.volunteer = null;
+        return matching;
+    }
+
+    public static Matching createWithVolunteer(Senior senior, Volunteer volunteer) {
+        Matching matching = new Matching();
+        matching.senior = senior;
+        matching.volunteer = volunteer;
+        matching.matchingStatus = MatchingStatus.ACTIVE;
+        return matching;
+    }
 }
