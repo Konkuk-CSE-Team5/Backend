@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -103,6 +104,13 @@ public class VolunteerRecordService {
                 .map(ch -> ch.callTime())
                 .reduce(Duration.ZERO, Duration::plus);
         volunteerRecord.updateTotalCallTime(totalCallTime);
+
+        // startTime 설정: callHistory 중 가장 먼저 시작한 통화 시간
+        LocalDateTime startTime = request.callHistory().stream()
+                .map(ch -> ch.dateTime())
+                .min(LocalDateTime::compareTo)
+                .orElse(null);
+        volunteerRecord.updateStartTime(startTime);
         volunteerRecordRepository.save(volunteerRecord);
     }
 
