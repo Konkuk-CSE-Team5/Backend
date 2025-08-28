@@ -6,6 +6,7 @@ import org.example.backend.domain.record.model.VolunteerRecord;
 import org.example.backend.domain.record.model.VolunteerRecordStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -75,4 +76,35 @@ public interface VolunteerRecordRepository extends JpaRepository<VolunteerRecord
             @Param("endDate") LocalDate endDate
     );
 
+    // PENDING 상태의 레코드 중 endTime이 현재 시간보다 이전인 것들을 찾는 쿼리
+    @Query("""
+        select vr
+        from VolunteerRecord vr
+        join vr.scheduleDetail sd
+        where vr.volunteerRecordStatus = 'PENDING'
+          and vr.scheduledDate = :today
+          and sd.endTime < :nowTime
+        """)
+    List<VolunteerRecord> findPendingRecordsWithExpiredEndTime(
+            @Param("today") LocalDate today,
+            @Param("nowTime") LocalTime nowTime
+    );
+
+    // PENDING 상태의 레코드 중 과거 날짜인 것들을 찾는 쿼리
+    @Query("""
+        select vr
+        from VolunteerRecord vr
+        where vr.volunteerRecordStatus = 'PENDING'
+          and vr.scheduledDate < :today
+        """)
+    List<VolunteerRecord> findPendingRecordsWithPastDate(@Param("today") LocalDate today);
+
+    // PENDING 상태의 레코드들을 NOT_CONDUCTED로 일괄 업데이트
+    @Modifying
+    @Query("""
+        update VolunteerRecord vr
+        set vr.volunteerRecordStatus = 'NOT_CONDUCTED'
+        where vr.id in :recordIds
+        """)
+    int updatePendingRecordsToNotConducted(@Param("recordIds") List<Long> recordIds);
 }

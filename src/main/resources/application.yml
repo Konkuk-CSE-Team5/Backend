@@ -112,6 +112,13 @@ spring:
   jackson:
     time-zone: Asia/Seoul
 
+# Cron Job 설정
+  task:
+    scheduling:
+      pool:
+        size: 5
+      thread-name-prefix: "cron-"
+
 cloud:
   aws:
     credentials:
