@@ -17,6 +17,7 @@ import org.example.backend.domain.senior.repository.SeniorRepository;
 
 import org.example.backend.domain.volunteer.dto.GetVolunteerRecordDetailResponse;
 import org.example.backend.domain.volunteer.dto.GetVolunteerRecordResponse;
+import org.example.backend.domain.volunteer.dto.GetVolunteerRecordUpdateFormResponse;
 
 import org.example.backend.domain.volunteer.dto.PostVolunteerRecordRequest;
 import org.example.backend.domain.volunteer.model.Volunteer;
@@ -178,6 +179,38 @@ public class VolunteerRecordService {
                                 .status(r.getVolunteerRecordStatus())
                                 .build())
                         .toList())
+                .build();
+    }
+
+    public GetVolunteerRecordUpdateFormResponse getRecordUpdateForm(Long loginUserId, Long recordId) {
+        // 봉사자 정보 확인
+        Volunteer volunteer = volunteerRepository.findByUserId(loginUserId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+
+        // 기록 조회
+        VolunteerRecord record = volunteerRecordRepository.findById(recordId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+
+        // 권한 체크: 기록의 매칭 봉사자와 로그인 사용자 일치 여부
+        if (!Objects.equals(record.getMatching().getVolunteer().getId(), volunteer.getId())) {
+            throw new CustomException(BAD_REQUEST);
+        }
+
+        // 리포트 및 콜히스토리 조회
+        Report report = record.getReport();
+        List<CallHistory> callHistories = callHistoryRepository.findAllByVolunteerRecordOrderByStartTimeAsc(record);
+
+        return GetVolunteerRecordUpdateFormResponse.builder()
+                .callHistory(callHistories.stream()
+                        .map(ch -> GetVolunteerRecordUpdateFormResponse.CallHistoryDto.builder()
+                                .dateTime(ch.getStartTime())
+                                .callTime(ch.getCallTime())
+                                .build())
+                        .toList())
+                .status(record.getVolunteerRecordStatus())
+                .health(report == null ? null : report.getHealth())
+                .mentality(report == null ? null : report.getMentality())
+                .opinion(report == null ? null : report.getOpinion())
                 .build();
     }
 }

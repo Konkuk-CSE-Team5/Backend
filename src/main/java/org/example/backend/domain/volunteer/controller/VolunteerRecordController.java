@@ -53,6 +53,18 @@ public class VolunteerRecordController {
             @PathVariable Long recordId) {
         return new BaseResponse<>(volunteerRecordService.getRecord(loginUserId, recordId));
     }
+
+    @Operation(
+            summary = "봉사 기록 수정 폼 조회",
+            description = "특정 봉사 기록의 수정 폼에 표시할 정보를 조회하는 API"
+    )
+    @CustomExceptionDescription(DEFAULT)
+    @GetMapping("{recordId}/updateForm")
+    public BaseResponse<GetVolunteerRecordUpdateFormResponse> getRecordUpdateForm(
+            @LoginUserId @Parameter(hidden = true) Long loginUserId,
+            @PathVariable Long recordId) {
+        return new BaseResponse<>(volunteerRecordService.getRecordUpdateForm(loginUserId, recordId));
+    }
 //
 //    @PatchMapping("{recordId}")
 //    public BaseResponse<Void> updateRecord(
