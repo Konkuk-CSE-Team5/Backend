@@ -52,11 +52,11 @@ public class VolunteerController {
     }
 
     @Operation(
-            summary = "봉사자 설정화면 조회",
-            description = "봉사자의 설정화면 정보를 조회하는 API"
+            summary = "봉사자 정보 수정",
+            description = "봉사자의 정보를 수정하는 API"
     )
     @CustomExceptionDescription(DEFAULT)
-    @PatchMapping("profile")
+    @PatchMapping("me")
     public BaseResponse<Void> patchVolunteerMe(
             @LoginUserId @Parameter(hidden = true) Long loginUserId,
             @RequestBody @jakarta.validation.Valid PatchVolunteerMeRequest request) {
