@@ -3,6 +3,7 @@ package org.example.backend.domain.organization.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.backend.domain.users.model.User;
+import org.example.backend.global.common.model.BaseEntity;
 
 @Getter
 @Setter
@@ -10,7 +11,7 @@ import org.example.backend.domain.users.model.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Organization {
+public class Organization extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

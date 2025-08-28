@@ -7,15 +7,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.backend.domain.organization.dto.GetOrganizationMeResponse;
 import org.example.backend.domain.organization.dto.PatchOrganizationMeRequest;
+import org.example.backend.domain.organization.dto.GetOrganziationMainResponse;
 import org.example.backend.domain.organization.dto.RegisterOrganizationRequest;
 import org.example.backend.domain.organization.service.OrganizationMeService;
+import org.example.backend.domain.organization.service.OrganizationMainService;
 import org.example.backend.domain.organization.service.RegisterOrganizationService;
-import org.example.backend.domain.volunteer.dto.GetVolunteerMeResponse;
-import org.example.backend.domain.volunteer.dto.PatchVolunteerMeRequest;
 import org.example.backend.global.auth.annotation.LoginUserId;
 import org.example.backend.global.common.response.BaseResponse;
 import org.example.backend.global.swagger.CustomExceptionDescription;
-import org.example.backend.global.swagger.SwaggerResponseDescription;
 import org.springframework.web.bind.annotation.*;
 
 import static org.example.backend.global.swagger.SwaggerResponseDescription.DEFAULT;
@@ -32,6 +31,7 @@ import static org.example.backend.global.swagger.SwaggerResponseDescription.REGI
 public class OrganizationController {
     private final RegisterOrganizationService registerOrganizationService;
     private final OrganizationMeService organizationMeService;
+    private final OrganizationMainService organizationMainService;
 
     @Operation(
             summary = "기관 회원가입 API",
@@ -65,5 +65,10 @@ public class OrganizationController {
             @RequestBody @jakarta.validation.Valid PatchOrganizationMeRequest request) {
         organizationMeService.patch(loginUserId, request);
         return new BaseResponse<>(null);
+    }
+
+    @GetMapping("/main")
+    public BaseResponse<GetOrganziationMainResponse> getMain(@LoginUserId Long userId){
+        return new BaseResponse<>(organizationMainService.getMain(userId));
     }
 }
