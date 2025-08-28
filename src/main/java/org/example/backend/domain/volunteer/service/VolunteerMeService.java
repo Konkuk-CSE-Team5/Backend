@@ -28,6 +28,9 @@ public class VolunteerMeService {
         Volunteer volunteer = volunteerRepository.findByUser(user).orElseThrow(() -> new CustomException(BAD_REQUEST));
 
         GetVolunteerMeResponse.ProfileGetDto profileGetDto = GetVolunteerMeResponse.ProfileGetDto.builder()
+                .userId(user.getUsername())
+                .birthday(volunteer.getBirthday())
+                .gender(volunteer.getGender())
                 .name(volunteer.getName())
                 .phone(volunteer.getPhone())
                 .build();
