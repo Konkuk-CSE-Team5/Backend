@@ -17,8 +17,8 @@ import java.util.List;
 @Builder
 @Schema(name = "GetVolunteerRecordDetailResponse", description = "봉사 기록 상세 응답")
 public record GetVolunteerRecordDetailResponse(
-        @Schema(description = "어르신 ID", example = "123")
-        Long seniorId,
+        @Schema(description = "매칭 ID", example = "123")
+        Long matchingId,
 
         @Schema(description = "어르신 이름", example = "김순자")
         String seniorName,

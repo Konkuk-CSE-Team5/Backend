@@ -127,7 +127,7 @@ public class VolunteerRecordService {
                             .map(r -> r.getTotalCallTime() == null ? 0 : r.getTotalCallTime().toSeconds())
                             .reduce(0L, Long::sum);
                     return GetVolunteerRecordResponse.SeniorDto.builder()
-                            .seniorId(senior.getId())
+                            .matchingId(m.getId())
                             .seniorName(senior.getName())
                             .status(m.getMatchingStatus())
                             .summary(GetVolunteerRecordResponse.Summary.builder()
@@ -172,7 +172,7 @@ public class VolunteerRecordService {
         List<VolunteerRecord> allRecords = volunteerRecordRepository.findAllByMatchingOrderByIdDesc(matching);
 
         return GetVolunteerRecordDetailResponse.builder()
-                .seniorId(senior.getId())
+                .matchingId(matching.getId())
                 .seniorName(senior.getName())
                 .records(allRecords.stream()
                         .map(r -> GetVolunteerRecordDetailResponse.Record.builder()
