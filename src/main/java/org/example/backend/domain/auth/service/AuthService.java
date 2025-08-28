@@ -17,6 +17,9 @@ public class AuthService {
     private final UserRepository userRepository;
     public LoginResponse login(LoginRequest request) {
         return userRepository.findByUsername(request.username()).map(user -> {
+            if(!user.isSamePassword(request.password())){
+                throw new CustomException(LOGIN_FAILED);
+            }
             String accessToken = jwtUtil.createAccessToken(user.getUsername(), user.getId());
             return new LoginResponse(accessToken);
         }).orElseThrow(() -> new CustomException(LOGIN_FAILED));
