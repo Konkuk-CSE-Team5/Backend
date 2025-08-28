@@ -36,4 +36,10 @@ public class Senior extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "organization_id")
     private Organization organization;
+    
+    public void updateSenior(String name, LocalDate birthday, String phone) {
+        this.name = name;
+        this.birthday = birthday;
+        this.phone = phone;
+    }
 }

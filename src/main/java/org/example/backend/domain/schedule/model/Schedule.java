@@ -28,4 +28,9 @@ public class Schedule extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "matching_id", nullable = false)
     private Matching matching;
+    
+    public void updateSchedule(LocalDate startDate, LocalDate endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }
