@@ -35,6 +35,7 @@ public record GetVolunteerMainResponse(
 
             @Schema(description = "다음 일정", example = "2025-08-27")
             @JsonFormat(pattern = "yyyy-MM-dd")
+            @com.fasterxml.jackson.annotation.JsonProperty("next_schedule")
             LocalDate nextSchedule
     ) {}
 

@@ -7,9 +7,9 @@ import org.example.backend.domain.volunteer.model.Volunteer;
 import org.example.backend.global.common.model.BaseEntity;
 
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 public class Matching extends BaseEntity {
     @Id
@@ -19,7 +19,7 @@ public class Matching extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private MatchingStatus matchingStatus = MatchingStatus.ACTIVE;
+    private MatchingStatus matchingStatus = MatchingStatus.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "senior_id", nullable = false)
@@ -28,4 +28,10 @@ public class Matching extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "volunteer_id")
     private Volunteer volunteer;
+
+
+    public void updateVolunteer(Volunteer volunteer) {
+        this.volunteer = volunteer;
+    }
+
 }

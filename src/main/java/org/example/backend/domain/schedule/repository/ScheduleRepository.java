@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<Schedule> findByMatching(Matching matching);
+    List<Schedule> findAllByMatching(Matching matching);
     List<Schedule> findAllByMatchingIn(List<Matching> matchings);
 }

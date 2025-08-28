@@ -5,10 +5,15 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.backend.domain.volunteer.dto.GetVolunteerMainResponse;
 import org.example.backend.domain.volunteer.dto.GetVolunteerMeResponse;
 import org.example.backend.domain.volunteer.dto.PatchVolunteerMeRequest;
+import org.example.backend.domain.volunteer.dto.RegisterCodeRequest;
+import org.example.backend.domain.volunteer.dto.RegisterCodeResponse;
 import org.example.backend.domain.volunteer.dto.RegisterVolunteerRequest;
 import org.example.backend.domain.volunteer.service.RegisterVolunteerService;
+import org.example.backend.domain.volunteer.service.VolunteerCodeService;
+import org.example.backend.domain.volunteer.service.VolunteerMainService;
 import org.example.backend.domain.volunteer.service.VolunteerMeService;
 import org.example.backend.global.auth.annotation.LoginUserId;
 import org.example.backend.global.common.response.BaseResponse;
@@ -29,6 +34,8 @@ import static org.example.backend.global.swagger.SwaggerResponseDescription.REGI
 public class VolunteerController {
     private final RegisterVolunteerService registerVolunteerService;
     private final VolunteerMeService volunteerMeService;
+    private final VolunteerMainService volunteerMainService;
+    private final VolunteerCodeService volunteerCodeService;
 
     @Operation(
             summary = "봉사자 회원가입 API",
@@ -64,5 +71,25 @@ public class VolunteerController {
         return new BaseResponse<>(null);
     }
 
+    @Operation(
+            summary = "봉사자 메인 화면 조회",
+            description = "봉사자의 메인 화면에 표시할 어르신 정보와 스케줄을 조회하는 API"
+    )
+    @CustomExceptionDescription(DEFAULT)
+    @GetMapping("main")
+    public BaseResponse<GetVolunteerMainResponse> getVolunteerMain(@LoginUserId @Parameter(hidden = true) Long loginUserId) {
+        return new BaseResponse<>(volunteerMainService.getMain(loginUserId));
+    }
 
+    @Operation(
+            summary = "봉사자 코드 등록",
+            description = "봉사자가 어르신과 매칭하기 위해 코드를 등록하는 API"
+    )
+    @CustomExceptionDescription(DEFAULT)
+    @PostMapping("codes")
+    public BaseResponse<RegisterCodeResponse> registerCode(
+            @LoginUserId @Parameter(hidden = true) Long loginUserId,
+            @RequestBody @jakarta.validation.Valid RegisterCodeRequest request) {
+        return new BaseResponse<>(volunteerCodeService.registerCode(loginUserId, request.code()));
+    }
 }
