@@ -33,7 +33,7 @@ public class RecordController {
     )
     @CustomExceptionDescription(MAIN)
     @GetMapping("/{recordId}")
-    public BaseResponse<GetRecordResponse> retrieveVolunteerRecord(@Parameter(name = "레코드 id") @PathVariable Long recordId){
+    public BaseResponse<GetRecordResponse> retrieveVolunteerRecord(@Parameter @PathVariable Long recordId){
         return new BaseResponse<>(retrieveVolunteerRecordService.retrieve(recordId));
     }
 }
