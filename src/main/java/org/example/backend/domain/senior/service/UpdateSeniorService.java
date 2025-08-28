@@ -8,7 +8,10 @@ import org.example.backend.domain.matching.model.MatchingStatus;
 import org.example.backend.domain.matching.repository.MatchingRepository;
 import org.example.backend.domain.organization.model.Organization;
 import org.example.backend.domain.organization.repository.OrganizationRepository;
+import org.example.backend.domain.schedule.model.Day;
 import org.example.backend.domain.schedule.model.Schedule;
+import org.example.backend.domain.schedule.model.ScheduleDetail;
+import org.example.backend.domain.schedule.repository.ScheduleDetailRepository;
 import org.example.backend.domain.schedule.repository.ScheduleRepository;
 import org.example.backend.domain.senior.dto.PatchSeniorRequest;
 import org.example.backend.domain.senior.model.Senior;
@@ -17,6 +20,7 @@ import org.example.backend.global.common.exception.CustomException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.example.backend.global.common.response.status.BaseExceptionResponseStatus.BAD_REQUEST;
 import static org.example.backend.global.common.response.status.BaseExceptionResponseStatus.ENTITY_NOT_FOUND;
@@ -29,6 +33,7 @@ public class UpdateSeniorService {
     private final OrganizationRepository organizationRepository;
     private final MatchingRepository matchingRepository;
     private final ScheduleRepository scheduleRepository;
+    private final ScheduleDetailRepository scheduleDetailRepository;
     
     @Transactional
     public void updateSenior(Long organizationUserId, Long seniorId, PatchSeniorRequest request) {
@@ -59,12 +64,13 @@ public class UpdateSeniorService {
         String newName = request.name() != null ? request.name().trim() : senior.getName();
         LocalDate newBirthday = request.birthday() != null ? request.birthday() : senior.getBirthday();
         String newContact = request.contact() != null ? request.contact().trim() : senior.getPhone();
+        String newNotes = request.notes() != null ? request.notes().trim() : senior.getNotes();
         
-        senior.updateSenior(newName, newBirthday, newContact);
+        senior.updateSenior(newName, newBirthday, newContact, newNotes);
         seniorRepository.save(senior);
         
-        // 어르신의 PENDING 매칭 조회
-        Matching matching = matchingRepository.findBySeniorIdAndMatchingStatus(seniorId, MatchingStatus.PENDING)
+        // 어르신의 ACTIVE 매칭 조회 (봉사자와 매칭된 상태)
+        Matching matching = matchingRepository.findBySeniorIdAndMatchingStatus(seniorId, MatchingStatus.ACTIVE)
                 .orElse(null);
         
         if (matching != null) {
@@ -77,9 +83,53 @@ public class UpdateSeniorService {
                 schedule.updateSchedule(newStartDate, newEndDate);
                 scheduleRepository.save(schedule);
                 log.info("[updateSenior] 스케줄 업데이트 완료 - scheduleId: {}", schedule.getId());
+                
+                // 스케줄 상세 정보 업데이트 (스케줄이 제공된 경우)
+                if (request.schedule() != null && !request.schedule().isEmpty()) {
+                    updateScheduleDetails(schedule, request.schedule());
+                }
             }
         }
         
         log.info("[updateSenior] 어르신 정보 수정 완료 - seniorId: {}", seniorId);
+    }
+    
+    private void updateScheduleDetails(Schedule schedule, List<PatchSeniorRequest.ScheduleDto> scheduleDtos) {
+        // 기존 스케줄 상세 정보 삭제
+        List<ScheduleDetail> existingDetails = scheduleDetailRepository.findAllBySchedule(schedule);
+        scheduleDetailRepository.deleteAll(existingDetails);
+        
+        // 새로운 스케줄 상세 정보 생성
+        for (PatchSeniorRequest.ScheduleDto scheduleDto : scheduleDtos) {
+            // 시간 유효성 검사
+            if (scheduleDto.startTime().isAfter(scheduleDto.endTime())) {
+                throw new CustomException(BAD_REQUEST);
+            }
+            
+            ScheduleDetail detail = ScheduleDetail.builder()
+                    .day(convertStringToDay(scheduleDto.day()))
+                    .startTime(scheduleDto.startTime())
+                    .endTime(scheduleDto.endTime())
+                    .schedule(schedule)
+                    .build();
+            
+            scheduleDetailRepository.save(detail);
+        }
+        
+        log.info("[updateScheduleDetails] 스케줄 상세 정보 업데이트 완료 - scheduleId: {}, detailCount: {}", 
+                schedule.getId(), scheduleDtos.size());
+    }
+    
+    private Day convertStringToDay(String dayStr) {
+        return switch (dayStr.toLowerCase()) {
+            case "sunday", "sun" -> Day.SUN;
+            case "monday", "mon" -> Day.MON;
+            case "tuesday", "tue" -> Day.TUE;
+            case "wednesday", "wed" -> Day.WED;
+            case "thursday", "thu" -> Day.THU;
+            case "friday", "fri" -> Day.FRI;
+            case "saturday", "sat" -> Day.SAT;
+            default -> throw new CustomException(BAD_REQUEST);
+        };
     }
 }

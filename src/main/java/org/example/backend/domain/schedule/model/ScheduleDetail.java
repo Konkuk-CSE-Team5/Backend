@@ -33,4 +33,10 @@ public class ScheduleDetail extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "schedule_id", nullable = false)
     private Schedule schedule;
+    
+    public void updateScheduleDetail(Day day, LocalTime startTime, LocalTime endTime) {
+        this.day = day;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }
