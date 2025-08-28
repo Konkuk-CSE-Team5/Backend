@@ -61,6 +61,8 @@ jobs:
               "sudo docker rm NMRADER_CONTAINER || true",
               "sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}",
               "sudo docker run -d -p 8080:8080 --name NMRADER_CONTAINER \
+                -e TZ=Asia/Seoul \
+                -e JAVA_TOOL_OPTIONS=\"-Duser.timezone=Asia/Seoul\" \
                 -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \
                 -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} \
                 -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL }} \

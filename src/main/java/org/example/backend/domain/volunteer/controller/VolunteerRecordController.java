@@ -29,10 +29,33 @@ public class VolunteerRecordController {
 
     private final VolunteerRecordService volunteerRecordService;
 
+    @Operation(
+            summary = "봉사 기록 목록 조회",
+            description = "로그인한 사용자의 봉사 기록 목록을 조회하는 API"
+    )
+    @CustomExceptionDescription(DEFAULT)
     @GetMapping
     public BaseResponse<GetVolunteerRecordResponse> getRecords(@LoginUserId @Parameter(hidden = true) Long loginUserId) {
         return new BaseResponse<>(volunteerRecordService.getRecords(loginUserId));
     }
+
+    @Operation(
+            summary = "봉사 기록 상세 조회",
+            description = "특정 봉사 기록의 상세 정보를 조회하는 API"
+    )
+    @CustomExceptionDescription(DEFAULT)
+    @GetMapping("/{matchingId}")
+    public BaseResponse<GetVolunteerRecordByMatchingResponse> getRecordsByMatching(
+            @LoginUserId @Parameter(hidden = true) Long loginUserId,
+            @PathVariable Long matchingId) {
+        return new BaseResponse<>(volunteerRecordService.getRecordsByMatching(loginUserId, matchingId));
+    }
+
+    @Operation(
+            summary = "봉사 기록 생성",
+            description = "봉사 기록을 신규로 생성하는 API"
+    )
+    @CustomExceptionDescription(DEFAULT)
     @PostMapping
     public BaseResponse<Void> setRecord(
             @LoginUserId @Parameter(hidden = true) Long loginUserId,
@@ -42,17 +65,17 @@ public class VolunteerRecordController {
         return new BaseResponse<>(null);
     }
 
-    @Operation(
-            summary = "봉사 기록 상세 조회",
-            description = "특정 봉사 기록의 상세 정보를 조회하는 API"
-    )
-    @CustomExceptionDescription(DEFAULT)
-    @GetMapping("{recordId}")
-    public BaseResponse<GetVolunteerRecordDetailResponse> getRecord(
-            @LoginUserId @Parameter(hidden = true) Long loginUserId,
-            @PathVariable Long recordId) {
-        return new BaseResponse<>(volunteerRecordService.getRecord(loginUserId, recordId));
-    }
+    // @Operation(
+    //         summary = "봉사 기록 상세 조회",
+    //         description = "특정 봉사 기록의 상세 정보를 조회하는 API"
+    // )
+    // @CustomExceptionDescription(DEFAULT)
+    // @GetMapping("{recordId}")
+    // public BaseResponse<GetVolunteerRecordDetailResponse> getRecord(
+    //         @LoginUserId @Parameter(hidden = true) Long loginUserId,
+    //         @PathVariable Long recordId) {
+    //     return new BaseResponse<>(volunteerRecordService.getRecord(loginUserId, recordId));
+    // }
 
     @Operation(
             summary = "봉사 기록 수정 폼 조회",

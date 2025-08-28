@@ -25,8 +25,8 @@ public record GetVolunteerRecordResponse(
     @Builder
     @Schema(name = "Senior", description = "어르신 요약 및 기록")
     public record SeniorDto(
-            @Schema(description = "어르신 ID", example = "123")
-            Long seniorId,
+            @Schema(description = "매칭 ID", example = "123")
+            Long matchingId,
 
             @Schema(description = "어르신 이름", example = "김순자")
             String seniorName,

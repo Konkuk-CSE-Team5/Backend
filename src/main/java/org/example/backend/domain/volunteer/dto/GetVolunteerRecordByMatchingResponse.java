@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
-@Schema(name = "GetVolunteerRecordDetailResponse", description = "봉사 기록 상세 응답")
-public record GetVolunteerRecordDetailResponse(
+@Schema(name = "GetVolunteerRecordByMatchingResponse", description = "매칭별 봉사 기록 응답")
+public record GetVolunteerRecordByMatchingResponse(
         @Schema(description = "매칭 ID", example = "123")
         Long matchingId,
 
@@ -41,7 +41,7 @@ public record GetVolunteerRecordDetailResponse(
             @JsonSerialize(using = DurationSerializer.class)
             Duration duration,
 
-            @Schema(description = "기록 상태", example = "COMPLETE")
+            @Schema(description = "기록 상태", example = "COMPLETED")
             VolunteerRecordStatus status
     ) {}
 }

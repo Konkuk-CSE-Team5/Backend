@@ -17,6 +17,7 @@ import org.example.backend.domain.record.repository.VolunteerRecordRepository;
 import org.example.backend.domain.senior.model.Senior;
 import org.example.backend.domain.senior.repository.SeniorRepository;
 
+import org.example.backend.domain.volunteer.dto.GetVolunteerRecordByMatchingResponse;
 import org.example.backend.domain.volunteer.dto.GetVolunteerRecordDetailResponse;
 import org.example.backend.domain.volunteer.dto.GetVolunteerRecordResponse;
 import org.example.backend.domain.volunteer.dto.GetVolunteerRecordUpdateFormResponse;
@@ -127,7 +128,7 @@ public class VolunteerRecordService {
                             .map(r -> r.getTotalCallTime() == null ? 0 : r.getTotalCallTime().toSeconds())
                             .reduce(0L, Long::sum);
                     return GetVolunteerRecordResponse.SeniorDto.builder()
-                            .seniorId(senior.getId())
+                            .matchingId(m.getId())
                             .seniorName(senior.getName())
                             .status(m.getMatchingStatus())
                             .summary(GetVolunteerRecordResponse.Summary.builder()
@@ -172,7 +173,7 @@ public class VolunteerRecordService {
         List<VolunteerRecord> allRecords = volunteerRecordRepository.findAllByMatchingOrderByIdDesc(matching);
 
         return GetVolunteerRecordDetailResponse.builder()
-                .seniorId(senior.getId())
+                .matchingId(matching.getId())
                 .seniorName(senior.getName())
                 .records(allRecords.stream()
                         .map(r -> GetVolunteerRecordDetailResponse.Record.builder()
@@ -267,5 +268,39 @@ public class VolunteerRecordService {
 
         // VolunteerRecord 변경사항 저장
         volunteerRecordRepository.save(record);
+    }
+
+    public GetVolunteerRecordByMatchingResponse getRecordsByMatching(Long loginUserId, Long matchingId) {
+        // 봉사자 정보 확인
+        Volunteer volunteer = volunteerRepository.findByUserId(loginUserId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+
+        // 매칭 정보 조회
+        Matching matching = matchingRepository.findById(matchingId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+
+        // 권한 체크: 매칭의 봉사자와 로그인 사용자 일치 여부
+        if (!Objects.equals(matching.getVolunteer().getId(), volunteer.getId())) {
+            throw new CustomException(BAD_REQUEST);
+        }
+
+        // 어르신 정보 조회
+        Senior senior = matching.getSenior();
+
+        // 해당 매칭의 모든 기록 조회 (최신순)
+        List<VolunteerRecord> records = volunteerRecordRepository.findAllByMatchingOrderByIdDesc(matching);
+
+        return GetVolunteerRecordByMatchingResponse.builder()
+                .matchingId(matching.getId())
+                .seniorName(senior.getName())
+                .records(records.stream()
+                        .map(r -> GetVolunteerRecordByMatchingResponse.Record.builder()
+                                .recordId(r.getId())
+                                .dateTime(r.getStartTime())
+                                .duration(r.getTotalCallTime())
+                                .status(r.getVolunteerRecordStatus())
+                                .build())
+                        .toList())
+                .build();
     }
 }
