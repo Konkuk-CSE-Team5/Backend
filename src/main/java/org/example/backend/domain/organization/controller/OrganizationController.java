@@ -55,8 +55,8 @@ public class OrganizationController {
     }
 
     @Operation(
-            summary = "기관 설정화면 조회",
-            description = "기관의 설정화면 정보를 조회하는 API"
+            summary = "기관 정보 수정",
+            description = "기관의 정보를 수정하는 API"
     )
     @CustomExceptionDescription(DEFAULT)
     @PatchMapping("me")
