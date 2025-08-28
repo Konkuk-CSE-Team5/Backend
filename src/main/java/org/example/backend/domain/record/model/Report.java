@@ -29,7 +29,7 @@ public class Report extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String opinion;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "volunteer_record_id")
     private VolunteerRecord volunteerRecord;
 }
