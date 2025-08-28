@@ -37,9 +37,12 @@ public class Senior extends BaseEntity {
     @JoinColumn(name = "organization_id")
     private Organization organization;
     
-    public void updateSenior(String name, LocalDate birthday, String phone) {
+    public void updateSenior(String name, LocalDate birthday, String phone, String notes) {
         this.name = name;
         this.birthday = birthday;
         this.phone = phone;
+        if (notes != null) {
+            this.notes = notes;
+        }
     }
 }
