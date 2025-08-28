@@ -18,6 +18,7 @@ public class Matching extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private MatchingStatus matchingStatus = MatchingStatus.ACTIVE;
 
     @ManyToOne
@@ -25,6 +26,6 @@ public class Matching extends BaseEntity {
     private Senior senior;
 
     @ManyToOne
-    @JoinColumn(name = "volunteer_id", nullable = false)
+    @JoinColumn(name = "volunteer_id")
     private Volunteer volunteer;
 }
