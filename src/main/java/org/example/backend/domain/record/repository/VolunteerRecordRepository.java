@@ -1,6 +1,7 @@
 package org.example.backend.domain.record.repository;
 
 import org.example.backend.domain.matching.model.Matching;
+import org.example.backend.domain.organization.model.Organization;
 import org.example.backend.domain.record.model.VolunteerRecord;
 import org.example.backend.domain.record.model.VolunteerRecordStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -53,5 +53,22 @@ public interface VolunteerRecordRepository extends JpaRepository<VolunteerRecord
     Optional<VolunteerRecord> findByMatchingAndScheduledDate(Matching matching, LocalDate scheduledDate);
 
     Optional<VolunteerRecord> findTopByMatchingOrderByIdDesc(Matching matching);
+
+    // 기관의 어르신들의 주의가 필요한 기록 조회 (이번 주, ABSENT 또는 NOT_CONDUCTED)
+    @Query("""
+        select vr
+        from VolunteerRecord vr
+        join vr.matching m
+        join m.senior s
+        where s.organization = :organization
+          and vr.scheduledDate between :startDate and :endDate
+          and vr.volunteerRecordStatus in ('ABSENT', 'NOT_CONDUCTED')
+        order by vr.id desc
+        """)
+    List<VolunteerRecord> findAttentionNeededRecordsByOrganizationAndDateRange(
+            @Param("organization") Organization organization,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 
 }
