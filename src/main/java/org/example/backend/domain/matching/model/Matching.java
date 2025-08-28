@@ -9,6 +9,7 @@ import org.example.backend.global.common.model.BaseEntity;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 public class Matching extends BaseEntity {
     @Id
