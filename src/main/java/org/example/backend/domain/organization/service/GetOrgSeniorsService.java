@@ -69,7 +69,7 @@ public class GetOrgSeniorsService {
         }
 
         // 매칭을 찾고
-        Matching matching = matchingRepository.findTopBySeniorIdAndMatchingStatus(senior.getId(), MatchingStatus.ACTIVE).get();
+        Matching matching = matchingRepository.findTopBySeniorIdOrderByIdDesc(senior.getId()).orElse(null);
 
         // 봉사 기간 조회
         Schedule schedule = scheduleRepository.findByMatching(matching).get();

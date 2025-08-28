@@ -73,7 +73,6 @@ public class OrganizationController {
             description = "기관의 홈화면을 조회하는 API"
     )
     @CustomExceptionDescription(MAIN)
-    @Parameter(in = ParameterIn.HEADER, required = true, name = "Authorization", description = "API 엑세스 토큰", example = "Bearer asdf1234")
     @GetMapping("/main")
     public BaseResponse<GetOrganziationMainResponse> getMain(@Parameter(hidden = true) @LoginUserId Long userId){
         return new BaseResponse<>(organizationMainService.getMain(userId));

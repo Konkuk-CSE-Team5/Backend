@@ -60,6 +60,7 @@ public class RegisterSeniorService {
                 .phone(request.contact().trim())
                 .code(seniorCode)
                 .organization(organization)
+                .notes(request.notes())
                 .build();
         
         Senior savedSenior = seniorRepository.save(senior);
