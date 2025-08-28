@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.backend.domain.organization.dto.*;
 import org.example.backend.domain.organization.service.GetOrgSeniorsService;
+import org.example.backend.domain.organization.service.GetAttentionNeededSeniorsService;
 import org.example.backend.domain.organization.service.OrganizationMeService;
 import org.example.backend.domain.organization.service.OrganizationMainService;
 import org.example.backend.domain.organization.service.RegisterOrganizationService;
@@ -31,6 +32,7 @@ public class OrganizationController {
     private final OrganizationMeService organizationMeService;
     private final OrganizationMainService organizationMainService;
     private final GetOrgSeniorsService getOrgSeniorsService;
+    private final GetAttentionNeededSeniorsService getAttentionNeededSeniorsService;
 
     @Operation(
             summary = "기관 회원가입 API",
@@ -96,5 +98,15 @@ public class OrganizationController {
     public BaseResponse<GetSeniorManagePageResponse> getSeniorManagementPage(@Parameter(hidden = true) @LoginUserId Long orgUserId,
                                                                              @PathVariable Long seniorId){
         return new BaseResponse<>(getOrgSeniorsService.getSenior(orgUserId, seniorId));
+    }
+
+    @Operation(
+            summary = "주의가 필요한 어르신 조회",
+            description = "이번 주에 ABSENT 또는 NOT_CONDUCTED 상태인 어르신을 조회하는 API"
+    )
+    @CustomExceptionDescription(MAIN)
+    @GetMapping("/me/seniors/attention-needed")
+    public BaseResponse<GetAttentionNeededSeniorsResponse> getAttentionNeededSeniors(@Parameter(hidden = true) @LoginUserId Long orgUserId){
+        return new BaseResponse<>(getAttentionNeededSeniorsService.getAttentionNeededSeniors(orgUserId));
     }
 }
