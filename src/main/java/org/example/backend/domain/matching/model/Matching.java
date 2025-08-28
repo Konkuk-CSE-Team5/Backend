@@ -18,7 +18,8 @@ public class Matching extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MatchingStatus matchingStatus = MatchingStatus.ACTIVE;
+    @Builder.Default
+    private MatchingStatus matchingStatus = MatchingStatus.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "senior_id", nullable = false)

@@ -90,15 +90,17 @@ public class VolunteerCodeService {
         Map<Long, List<ScheduleDetail>> scheduleToDetails = allScheduleDetails.stream()
                 .collect(Collectors.groupingBy(sd -> sd.getSchedule().getId()));
 
-        // 스케줄 정보 구성
+        // 스케줄 정보 구성 - 모든 스케줄의 상세 정보 수집
         List<RegisterCodeResponse.ScheduleDto> scheduleDtos = List.of();
         LocalDate nextSchedule = null;
 
         if (!schedules.isEmpty()) {
-            Schedule schedule = schedules.get(0); // 첫 번째 스케줄 사용
-            List<ScheduleDetail> details = scheduleToDetails.getOrDefault(schedule.getId(), List.of());
+            // 모든 스케줄의 상세 정보를 하나의 리스트로 수집
+            List<ScheduleDetail> allDetails = schedules.stream()
+                    .flatMap(schedule -> scheduleToDetails.getOrDefault(schedule.getId(), List.of()).stream())
+                    .toList();
             
-            scheduleDtos = details.stream()
+            scheduleDtos = allDetails.stream()
                     .map(detail -> RegisterCodeResponse.ScheduleDto.builder()
                             .day(convertDayToString(detail.getDay()))
                             .time(detail.getStartTime())
@@ -106,7 +108,7 @@ public class VolunteerCodeService {
                     .toList();
 
             // 다음 일정 계산
-            nextSchedule = calculateNextSchedule(details);
+            nextSchedule = calculateNextSchedule(allDetails);
         }
 
         return RegisterCodeResponse.builder()
