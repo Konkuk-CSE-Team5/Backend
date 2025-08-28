@@ -1,0 +1,35 @@
+package org.example.backend.domain.record.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.example.backend.domain.schedule.model.ScheduleDetail;
+import org.example.backend.global.common.model.BaseEntity;
+import org.example.backend.global.convertor.DurationToSecondsConverter;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class VolunteerRecord extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private VolunteerRecordStatus volunteerRecordStatus;
+
+    private LocalDateTime startTime;
+
+    @Convert(converter = DurationToSecondsConverter.class)
+    private Duration totalCallTime;
+
+    @OneToOne
+    @JoinColumn(name = "schedule_detail_id")
+    private ScheduleDetail scheduleDetail;
+}

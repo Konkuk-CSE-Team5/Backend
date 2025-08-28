@@ -1,39 +1,35 @@
-package org.example.backend.domain.volunteer.model;
+package org.example.backend.domain.record.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.backend.domain.users.model.User;
 import org.example.backend.global.common.model.BaseEntity;
-
-import java.time.LocalDate;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Volunteer extends BaseEntity {
+public class Report extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private LocalDate birthday;
+    private HealthLevel health;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Gender gender;
+    private MentalityLevel mentality;
 
-    @Column(nullable = false)
-    private String name;
+    @Column(columnDefinition = "TEXT")
+    private String opinion;
 
-    @Column(nullable = false)
-    private String phone;
-
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "volunteer_record_id", nullable = false, unique = true)
+    private VolunteerRecord volunteerRecord;
 }
