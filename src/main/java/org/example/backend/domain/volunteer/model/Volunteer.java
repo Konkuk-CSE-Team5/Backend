@@ -1,16 +1,14 @@
 package org.example.backend.domain.volunteer.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.backend.domain.users.model.User;
 import org.example.backend.global.common.model.BaseEntity;
 
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

@@ -3,6 +3,7 @@ package org.example.backend.global.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.examples.Example;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.example.backend.global.common.response.BaseErrorResponse;
 import org.example.backend.global.common.response.status.BaseExceptionResponseStatus;
 import org.example.backend.global.swagger.CustomExceptionDescription;
@@ -38,7 +41,23 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI();
+
+        final String schemeName = "bearerAuth";
+
+        return new OpenAPI()
+                // 전역 SecurityRequirement: 아래 스키마를 모든 API에 적용
+                .addSecurityItem(new SecurityRequirement().addList(schemeName))
+                // SecurityScheme 정의: Bearer JWT
+                .components(new Components().addSecuritySchemes(
+                        schemeName,
+                        new SecurityScheme()
+                                .name("Authorization")
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")   // (표시용)
+                                .description("Authorization 헤더에 'Bearer {JWT}' 형태로 전달")
+                ));
+//        return new OpenAPI();
     }
 
     @Bean
