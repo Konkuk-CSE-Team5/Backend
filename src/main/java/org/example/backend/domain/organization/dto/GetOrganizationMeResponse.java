@@ -11,11 +11,13 @@ public record GetOrganizationMeResponse(
 ) {
         @Builder
         public record ProfileGetDto(
-                @Schema(description = "기관 이름", example = "행복 복지센터")
+                @Schema(description = "아이디", example = "org123")
+                String userId,
+                @Schema(description = "기관 이름", example = "찾아유 복지관")
                 String name,
-                @Schema(description = "담당자 이름", example = "홍길동")
+                @Schema(description = "담당자 이름", example = "김매니저")
                 String manager,
-                @Schema(description = "전화번호", example = "010-1234-5678")
+                @Schema(description = "담당자 전화번호", example = "010-1111-2222")
                 String managerContact
         ) {}
 }
