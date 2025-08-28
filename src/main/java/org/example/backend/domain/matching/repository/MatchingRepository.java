@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MatchingRepository extends JpaRepository<Matching, Long> {
+    Optional<Matching> findBySeniorIdAndMatchingStatus(Long seniorId, MatchingStatus matchingStatus);
+
     Optional<Matching> findTopBySeniorIdAndMatchingStatus(Long seniorId, MatchingStatus matchingStatus);
 
     Optional<Matching> findByVolunteerIdAndSeniorIdAndMatchingStatus(Long volunteerId, Long seniorId, MatchingStatus status);
