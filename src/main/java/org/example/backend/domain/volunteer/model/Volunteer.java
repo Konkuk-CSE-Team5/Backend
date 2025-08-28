@@ -22,13 +22,17 @@ public class Volunteer extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate birthday;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Gender gender;
+
     @Column(nullable = false)
     private String name;
+
     @Column(nullable = false)
     private String phone;
+
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -1,32 +1,35 @@
-package org.example.backend.domain.organization.model;
+package org.example.backend.domain.schedule.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.backend.domain.users.model.User;
+import org.example.backend.global.common.model.BaseEntity;
+
+import java.time.LocalTime;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Organization {
+public class ScheduleDetail extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private Day day;
 
     @Column(nullable = false)
-    private String manager;
+    private LocalTime startTime;
 
     @Column(nullable = false)
-    private String managerPhone;
+    private LocalTime endTime;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "schedule_id", nullable = false)
+    private Schedule schedule;
 }
