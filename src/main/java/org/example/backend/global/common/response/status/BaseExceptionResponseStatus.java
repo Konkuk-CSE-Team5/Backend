@@ -24,8 +24,8 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
 
     // 3000: Auth 관련 에러
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED.value(), 3000, "로그인에 실패했습니다"),
-
-    DUPLICATE_USERNAME(HttpStatus.CONFLICT.value(), 3001, "이미 존재하는 아이디로 가입할 수 없습니다" );
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND.value(), 3001, "사용자를 찾을 수 없습니다"),
+    DUPLICATE_USERNAME(HttpStatus.CONFLICT.value(), 3002, "이미 존재하는 아이디로 가입할 수 없습니다" );
 
 
     private final int status;

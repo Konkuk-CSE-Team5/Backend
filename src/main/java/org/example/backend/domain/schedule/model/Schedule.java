@@ -8,6 +8,7 @@ import org.example.backend.global.common.model.BaseEntity;
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
