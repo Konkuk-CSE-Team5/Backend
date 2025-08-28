@@ -26,5 +26,5 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
 
     Optional<Matching> findTopBySeniorIdOrderByIdDesc(Long seniorId);
 
-    Optional<Matching> findBySenior(Senior senior);
+    Optional<Matching> findTopBySenior(Senior senior);
 }
