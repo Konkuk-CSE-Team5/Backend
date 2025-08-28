@@ -199,11 +199,15 @@ public class VolunteerRecordService {
             throw new CustomException(BAD_REQUEST);
         }
 
+        // 어르신 정보 조회
+        Senior senior = record.getMatching().getSenior();
+        
         // 리포트 및 콜히스토리 조회
         Report report = record.getReport();
         List<CallHistory> callHistories = callHistoryRepository.findAllByVolunteerRecordOrderByStartTimeAsc(record);
 
         return GetVolunteerRecordUpdateFormResponse.builder()
+                .name(senior.getName())
                 .callHistory(callHistories.stream()
                         .map(ch -> GetVolunteerRecordUpdateFormResponse.CallHistoryDto.builder()
                                 .dateTime(ch.getStartTime())
