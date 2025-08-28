@@ -1,18 +1,13 @@
 package org.example.backend.global.util;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.DeserializationContext;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 public class DurationSerializer extends JsonSerializer<Duration> {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     @Override
     public void serialize(Duration value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -20,9 +15,25 @@ public class DurationSerializer extends JsonSerializer<Duration> {
             gen.writeNull();
             return;
         }
-        long seconds = value.getSeconds();
-        LocalTime time = LocalTime.ofSecondOfDay(seconds);
-        gen.writeString(time.format(FORMATTER));
+        
+        long totalSeconds = value.getSeconds();
+        boolean isNegative = totalSeconds < 0;
+        
+        // Use absolute value for calculations, preserve sign
+        long absSeconds = Math.abs(totalSeconds);
+        
+        long hours = absSeconds / 3600;
+        long minutes = (absSeconds % 3600) / 60;
+        long seconds = absSeconds % 60;
+        
+        // Format as H+:mm:ss with optional leading '-'
+        String formatted = String.format("%s%d:%02d:%02d", 
+            isNegative ? "-" : "", 
+            hours, 
+            minutes, 
+            seconds);
+            
+        gen.writeString(formatted);
     }
 }
 

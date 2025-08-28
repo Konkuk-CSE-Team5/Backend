@@ -7,8 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.backend.domain.volunteer.dto.*;
-import org.example.backend.domain.volunteer.service.RegisterVolunteerService;
-import org.example.backend.domain.volunteer.service.VolunteerMeService;
+
 import org.example.backend.domain.volunteer.service.VolunteerRecordService;
 import org.example.backend.global.auth.annotation.LoginUserId;
 import org.example.backend.global.common.response.BaseResponse;
@@ -16,7 +15,6 @@ import org.example.backend.global.swagger.CustomExceptionDescription;
 import org.springframework.web.bind.annotation.*;
 
 import static org.example.backend.global.swagger.SwaggerResponseDescription.DEFAULT;
-import static org.example.backend.global.swagger.SwaggerResponseDescription.REGISTER;
 
 
 @Slf4j
@@ -36,17 +34,22 @@ public class VolunteerRecordController {
         return new BaseResponse<>(volunteerRecordService.getRecords(loginUserId));
     }
     @PatchMapping
-    public BaseResponse<Void> createRecord(
-            @LoginUserId Long loginUserId,
+    public BaseResponse<Void> setRecord(
+            @LoginUserId @Parameter(hidden = true) Long loginUserId,
             @RequestBody @Valid PostVolunteerRecordRequest request
     ) {
-        volunteerRecordService.createRecord(loginUserId, request);
+        volunteerRecordService.setRecord(loginUserId, request);
         return new BaseResponse<>(null);
     }
 
+//    @Operation(
+//            summary = "봉사 기록 상세 조회",
+//            description = "특정 봉사 기록의 상세 정보를 조회하는 API"
+//    )
+//    @CustomExceptionDescription(DEFAULT)
 //    @GetMapping("{recordId}")
 //    public BaseResponse<GetVolunteerRecordDetailResponse> getRecord(
-//            @LoginUserId Long loginUserId,
+//            @LoginUserId @Parameter(hidden = true) Long loginUserId,
 //            @PathVariable Long recordId) {
 //        return new BaseResponse<>(volunteerRecordService.getRecord(loginUserId, recordId));
 //    }

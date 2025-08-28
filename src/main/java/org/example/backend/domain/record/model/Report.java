@@ -32,4 +32,10 @@ public class Report extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "volunteer_record_id", nullable = false, unique = true)
     private VolunteerRecord volunteerRecord;
+
+    public void updateReport(HealthLevel health, MentalityLevel mentality, String opinion) {
+        this.health = health;
+        this.mentality = mentality;
+        this.opinion = opinion;
+    }
 }

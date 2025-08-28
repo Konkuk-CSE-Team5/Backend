@@ -65,8 +65,7 @@ public record PostVolunteerRecordRequest(
                     requiredMode = Schema.RequiredMode.REQUIRED)
             java.time.LocalDateTime dateTime,
 
-            @NotBlank
-            @Pattern(regexp = "^[0-9]{2}:[0-9]{2}:[0-9]{2}$", message = "callTime은 HH:mm:ss 형식이어야 합니다.")
+            @NotNull
             @Schema(description = "통화 소요 시간 (HH:mm:ss)",
                     example = "00:07:12",
                     requiredMode = Schema.RequiredMode.REQUIRED)

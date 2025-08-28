@@ -14,19 +14,20 @@ import org.example.backend.domain.record.repository.ReportRepository;
 import org.example.backend.domain.record.repository.VolunteerRecordRepository;
 import org.example.backend.domain.senior.model.Senior;
 import org.example.backend.domain.senior.repository.SeniorRepository;
-import org.example.backend.domain.users.model.User;
-import org.example.backend.domain.users.repository.UserRepository;
-import org.example.backend.domain.volunteer.dto.GetVolunteerMeResponse;
+
 import org.example.backend.domain.volunteer.dto.GetVolunteerRecordResponse;
-import org.example.backend.domain.volunteer.dto.PatchVolunteerMeRequest;
+import org.example.backend.domain.volunteer.dto.GetVolunteerRecordDetailResponse;
+
 import org.example.backend.domain.volunteer.dto.PostVolunteerRecordRequest;
 import org.example.backend.domain.volunteer.model.Volunteer;
 import org.example.backend.domain.volunteer.repository.VolunteerRepository;
 import org.example.backend.global.common.exception.CustomException;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static org.example.backend.global.common.response.status.BaseExceptionResponseStatus.BAD_REQUEST;
 
@@ -42,7 +43,7 @@ public class VolunteerRecordService {
     private final CallHistoryRepository callHistoryRepository;
 
     @Transactional
-    public void createRecord(Long loginUserId, PostVolunteerRecordRequest request) {
+    public void setRecord(Long loginUserId, PostVolunteerRecordRequest request) {
         // 봉사자 정보 조회
         Volunteer volunteer = volunteerRepository.findByUserId(loginUserId)
                 .orElseThrow(() -> new CustomException(BAD_REQUEST));
@@ -57,16 +58,32 @@ public class VolunteerRecordService {
         LocalDate today = LocalDate.now();
         VolunteerRecord volunteerRecord = volunteerRecordRepository.findByMatchingAndScheduledDate(matching, today)
                 .orElseThrow(() -> new CustomException(BAD_REQUEST));
-        // report 생성
-        Report report = Report.builder()
-                .health(request.health())
-                .mentality(request.mentality())
-                .opinion(request.opinion())
-                .volunteerRecord(volunteerRecord)
-                .build();
+        
+        // 요청의 상태를 VolunteerRecord에 적용
+        volunteerRecord.updateStatus(request.status());
+        
+        // report 생성 또는 업데이트 (upsert)
+        Report report = reportRepository.findByVolunteerRecord(volunteerRecord)
+                .map(existingReport -> {
+                    // 기존 리포트가 있으면 업데이트
+                    existingReport.updateReport(request.health(), request.mentality(), request.opinion());
+                    return existingReport;
+                })
+                .orElseGet(() -> {
+                    // 기존 리포트가 없으면 새로 생성
+                    return Report.builder()
+                            .health(request.health())
+                            .mentality(request.mentality())
+                            .opinion(request.opinion())
+                            .volunteerRecord(volunteerRecord)
+                            .build();
+                });
         reportRepository.save(report);
 
-        // call history 생성
+        // 기존 call history 삭제 (중복 방지)
+        callHistoryRepository.deleteByVolunteerRecord(volunteerRecord);
+
+        // 새로운 call history 생성
         List<CallHistory> callHistories = request.callHistory().stream()
                 .map(ch -> CallHistory.builder()
                         .startTime(ch.dateTime())
@@ -75,6 +92,13 @@ public class VolunteerRecordService {
                         .build())
                 .toList();
         callHistoryRepository.saveAll(callHistories);
+
+        // totalCallTime 계산 및 업데이트
+        Duration totalCallTime = request.callHistory().stream()
+                .map(ch -> ch.callTime())
+                .reduce(Duration.ZERO, Duration::plus);
+        volunteerRecord.updateTotalCallTime(totalCallTime);
+        volunteerRecordRepository.save(volunteerRecord);
     }
 
     public GetVolunteerRecordResponse getRecords(Long loginUserId) {
@@ -82,7 +106,11 @@ public class VolunteerRecordService {
         Volunteer volunteer = volunteerRepository.findByUserId(loginUserId)
                 .orElseThrow(() -> new CustomException(BAD_REQUEST));
         List<Matching> matchingList = matchingRepository.findAllByVolunteer(volunteer);
-        if (matchingList.isEmpty()) return null;
+        if (matchingList.isEmpty()) {
+            return GetVolunteerRecordResponse.builder()
+                    .seniors(List.of())
+                    .build();
+        }
         List<GetVolunteerRecordResponse.SeniorDto> seniorDtos = matchingList.stream()
                 .map(m -> {
                     // 어르신 정보
@@ -119,4 +147,36 @@ public class VolunteerRecordService {
                 .seniors(seniorDtos)
                 .build();
     }
+
+//    public GetVolunteerRecordDetailResponse getRecord(Long loginUserId, Long recordId) {
+//        // 봉사자 정보 확인
+//        Volunteer volunteer = volunteerRepository.findByUserId(loginUserId)
+//                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+//
+//        // 기록 조회
+//        VolunteerRecord record = volunteerRecordRepository.findById(recordId)
+//                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+//
+//        // 권한 체크: 기록의 매칭 봉사자와 로그인 사용자 일치 여부
+//        if (!Objects.equals(record.getMatching().getVolunteer().getId(), volunteer.getId())) {
+//            throw new CustomException(BAD_REQUEST);
+//        }
+//
+//        // 리포트 및 콜히스토리 조회
+//        Report report = record.getReport();
+//        List<CallHistory> callHistories = callHistoryRepository.findAllByVolunteerRecordOrderByStartTimeAsc(record);
+//
+//        return GetVolunteerRecordDetailResponse.builder()
+//                .callHistory(callHistories.stream()
+//                        .map(ch -> GetVolunteerRecordDetailResponse.CallHistoryDto.builder()
+//                                .dateTime(ch.getStartTime())
+//                                .callTime(ch.getCallTime())
+//                                .build())
+//                        .toList())
+//                .status(record.getVolunteerRecordStatus())
+//                .health(report == null ? null : report.getHealth())
+//                .mentality(report == null ? null : report.getMentality())
+//                .opinion(report == null ? null : report.getOpinion())
+//                .build();
+//    }
 }
