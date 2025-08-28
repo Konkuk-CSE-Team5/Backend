@@ -17,6 +17,7 @@ import org.example.backend.domain.senior.repository.SeniorRepository;
 import org.example.backend.domain.users.model.User;
 import org.example.backend.domain.users.repository.UserRepository;
 import org.example.backend.domain.volunteer.dto.GetVolunteerMeResponse;
+import org.example.backend.domain.volunteer.dto.GetVolunteerRecordResponse;
 import org.example.backend.domain.volunteer.dto.PatchVolunteerMeRequest;
 import org.example.backend.domain.volunteer.dto.PostVolunteerRecordRequest;
 import org.example.backend.domain.volunteer.model.Volunteer;
@@ -74,5 +75,48 @@ public class VolunteerRecordService {
                         .build())
                 .toList();
         callHistoryRepository.saveAll(callHistories);
+    }
+
+    public GetVolunteerRecordResponse getRecords(Long loginUserId) {
+        // 봉사자 정보 조회
+        Volunteer volunteer = volunteerRepository.findByUserId(loginUserId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+        List<Matching> matchingList = matchingRepository.findAllByVolunteer(volunteer);
+        if (matchingList.isEmpty()) return null;
+        List<GetVolunteerRecordResponse.SeniorDto> seniorDtos = matchingList.stream()
+                .map(m -> {
+                    // 어르신 정보
+                    Senior senior = m.getSenior();
+                    // 봉사 기록
+                    List<VolunteerRecord> records = volunteerRecordRepository.findAllByMatchingOrderByIdDesc(m);
+                    // 통화 요약
+                    int totalCalls = records.size();
+                    var totalDuration = records.stream()
+                            .map(r -> r.getTotalCallTime() == null ? 0 : r.getTotalCallTime().toSeconds())
+                            .reduce(0L, Long::sum);
+                    return GetVolunteerRecordResponse.SeniorDto.builder()
+                            .seniorId(senior.getId())
+                            .seniorName(senior.getName())
+                            .status(m.getMatchingStatus())
+                            .summary(GetVolunteerRecordResponse.Summary.builder()
+                                    .totalCalls(totalCalls)
+                                    .totalDuration(java.time.Duration.ofSeconds(totalDuration))
+                                    .build())
+                            .records(records.stream()
+                                    .map(r -> GetVolunteerRecordResponse.Record.builder()
+                                            .recordId(r.getId())
+                                            .dateTime(r.getStartTime())
+                                            .duration(r.getTotalCallTime())
+                                            .status(r.getVolunteerRecordStatus())
+                                            .build()
+                                    )
+                                    .toList())
+                            .build();
+                })
+                .toList();
+
+        return GetVolunteerRecordResponse.builder()
+                .seniors(seniorDtos)
+                .build();
     }
 }

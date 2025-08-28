@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.backend.domain.volunteer.dto.GetVolunteerMeResponse;
-import org.example.backend.domain.volunteer.dto.PatchVolunteerMeRequest;
-import org.example.backend.domain.volunteer.dto.PostVolunteerRecordRequest;
-import org.example.backend.domain.volunteer.dto.RegisterVolunteerRequest;
+import org.example.backend.domain.volunteer.dto.*;
 import org.example.backend.domain.volunteer.service.RegisterVolunteerService;
 import org.example.backend.domain.volunteer.service.VolunteerMeService;
 import org.example.backend.domain.volunteer.service.VolunteerRecordService;
@@ -35,7 +32,7 @@ public class VolunteerRecordController {
     private final VolunteerRecordService volunteerRecordService;
 
     @GetMapping
-    public BaseResponse<List<GetVolunteerRecordResponse>> getRecords(@LoginUserId @Parameter(hidden = true) Long loginUserId) {
+    public BaseResponse<GetVolunteerRecordResponse> getRecords(@LoginUserId @Parameter(hidden = true) Long loginUserId) {
         return new BaseResponse<>(volunteerRecordService.getRecords(loginUserId));
     }
     @PatchMapping
@@ -47,19 +44,19 @@ public class VolunteerRecordController {
         return new BaseResponse<>(null);
     }
 
-    @GetMapping("{recordId}")
-    public BaseResponse<GetVolunteerRecordDetailResponse> getRecord(
-            @LoginUserId Long loginUserId,
-            @PathVariable Long recordId) {
-        return new BaseResponse<>(volunteerRecordService.getRecord(loginUserId, recordId));
-    }
-
-    @PatchMapping("{recordId}")
-    public BaseResponse<Void> updateRecord(
-            @LoginUserId Long loginUserId,
-            @PathVariable Long recordId,
-            @RequestBody @Valid PatchVolunteerRecordRequest request) {
-        volunteerRecordService.updateRecord(loginUserId, recordId, request);
-        return new BaseResponse<>(null);
-    }
+//    @GetMapping("{recordId}")
+//    public BaseResponse<GetVolunteerRecordDetailResponse> getRecord(
+//            @LoginUserId Long loginUserId,
+//            @PathVariable Long recordId) {
+//        return new BaseResponse<>(volunteerRecordService.getRecord(loginUserId, recordId));
+//    }
+//
+//    @PatchMapping("{recordId}")
+//    public BaseResponse<Void> updateRecord(
+//            @LoginUserId Long loginUserId,
+//            @PathVariable Long recordId,
+//            @RequestBody @Valid PatchVolunteerRecordRequest request) {
+//        volunteerRecordService.updateRecord(loginUserId, recordId, request);
+//        return new BaseResponse<>(null);
+//    }
 }
