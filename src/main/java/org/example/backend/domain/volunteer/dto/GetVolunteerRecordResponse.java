@@ -73,7 +73,7 @@ public record GetVolunteerRecordResponse(
 
             @Schema(
                     description = "기록 상태",
-                    example = "COMPLETED"
+                    example = "COMPLETE"
             )
             VolunteerRecordStatus status
     ) {}

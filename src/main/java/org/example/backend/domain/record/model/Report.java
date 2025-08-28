@@ -19,11 +19,11 @@ public class Report extends BaseEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private HealthLevel health;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private MentalityLevel mentality;
 
     @Column(columnDefinition = "TEXT")

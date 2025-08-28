@@ -7,6 +7,8 @@ import org.example.backend.domain.matching.model.Matching;
 import org.example.backend.domain.matching.model.MatchingStatus;
 import org.example.backend.domain.matching.repository.MatchingRepository;
 import org.example.backend.domain.record.model.CallHistory;
+import org.example.backend.domain.record.model.HealthLevel;
+import org.example.backend.domain.record.model.MentalityLevel;
 import org.example.backend.domain.record.model.Report;
 import org.example.backend.domain.record.model.VolunteerRecord;
 import org.example.backend.domain.record.repository.CallHistoryRepository;
@@ -15,8 +17,11 @@ import org.example.backend.domain.record.repository.VolunteerRecordRepository;
 import org.example.backend.domain.senior.model.Senior;
 import org.example.backend.domain.senior.repository.SeniorRepository;
 
+import org.example.backend.domain.volunteer.dto.GetVolunteerRecordDetailResponse;
 import org.example.backend.domain.volunteer.dto.GetVolunteerRecordResponse;
+import org.example.backend.domain.volunteer.dto.GetVolunteerRecordUpdateFormResponse;
 
+import org.example.backend.domain.volunteer.dto.PatchVolunteerRecordRequest;
 import org.example.backend.domain.volunteer.dto.PostVolunteerRecordRequest;
 import org.example.backend.domain.volunteer.model.Volunteer;
 import org.example.backend.domain.volunteer.repository.VolunteerRepository;
@@ -147,35 +152,116 @@ public class VolunteerRecordService {
                 .build();
     }
 
-//    public GetVolunteerRecordDetailResponse getRecord(Long loginUserId, Long recordId) {
-//        // 봉사자 정보 확인
-//        Volunteer volunteer = volunteerRepository.findByUserId(loginUserId)
-//                .orElseThrow(() -> new CustomException(BAD_REQUEST));
-//
-//        // 기록 조회
-//        VolunteerRecord record = volunteerRecordRepository.findById(recordId)
-//                .orElseThrow(() -> new CustomException(BAD_REQUEST));
-//
-//        // 권한 체크: 기록의 매칭 봉사자와 로그인 사용자 일치 여부
-//        if (!Objects.equals(record.getMatching().getVolunteer().getId(), volunteer.getId())) {
-//            throw new CustomException(BAD_REQUEST);
-//        }
-//
-//        // 리포트 및 콜히스토리 조회
-//        Report report = record.getReport();
-//        List<CallHistory> callHistories = callHistoryRepository.findAllByVolunteerRecordOrderByStartTimeAsc(record);
-//
-//        return GetVolunteerRecordDetailResponse.builder()
-//                .callHistory(callHistories.stream()
-//                        .map(ch -> GetVolunteerRecordDetailResponse.CallHistoryDto.builder()
-//                                .dateTime(ch.getStartTime())
-//                                .callTime(ch.getCallTime())
-//                                .build())
-//                        .toList())
-//                .status(record.getVolunteerRecordStatus())
-//                .health(report == null ? null : report.getHealth())
-//                .mentality(report == null ? null : report.getMentality())
-//                .opinion(report == null ? null : report.getOpinion())
-//                .build();
-//    }
+    public GetVolunteerRecordDetailResponse getRecord(Long loginUserId, Long recordId) {
+        // 봉사자 정보 확인
+        Volunteer volunteer = volunteerRepository.findByUserId(loginUserId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+
+        // 기록 조회
+        VolunteerRecord record = volunteerRecordRepository.findById(recordId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+
+        // 권한 체크: 기록의 매칭 봉사자와 로그인 사용자 일치 여부
+        if (!Objects.equals(record.getMatching().getVolunteer().getId(), volunteer.getId())) {
+            throw new CustomException(BAD_REQUEST);
+        }
+
+        // 해당 매칭의 모든 기록 조회
+        Matching matching = record.getMatching();
+        Senior senior = matching.getSenior();
+        List<VolunteerRecord> allRecords = volunteerRecordRepository.findAllByMatchingOrderByIdDesc(matching);
+
+        return GetVolunteerRecordDetailResponse.builder()
+                .seniorId(senior.getId())
+                .seniorName(senior.getName())
+                .records(allRecords.stream()
+                        .map(r -> GetVolunteerRecordDetailResponse.Record.builder()
+                                .recordId(r.getId())
+                                .dateTime(r.getStartTime())
+                                .duration(r.getTotalCallTime())
+                                .status(r.getVolunteerRecordStatus())
+                                .build())
+                        .toList())
+                .build();
+    }
+
+    public GetVolunteerRecordUpdateFormResponse getRecordUpdateForm(Long loginUserId, Long recordId) {
+        // 봉사자 정보 확인
+        Volunteer volunteer = volunteerRepository.findByUserId(loginUserId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+
+        // 기록 조회
+        VolunteerRecord record = volunteerRecordRepository.findById(recordId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+
+        // 권한 체크: 기록의 매칭 봉사자와 로그인 사용자 일치 여부
+        if (!Objects.equals(record.getMatching().getVolunteer().getId(), volunteer.getId())) {
+            throw new CustomException(BAD_REQUEST);
+        }
+
+        // 리포트 및 콜히스토리 조회
+        Report report = record.getReport();
+        List<CallHistory> callHistories = callHistoryRepository.findAllByVolunteerRecordOrderByStartTimeAsc(record);
+
+        return GetVolunteerRecordUpdateFormResponse.builder()
+                .callHistory(callHistories.stream()
+                        .map(ch -> GetVolunteerRecordUpdateFormResponse.CallHistoryDto.builder()
+                                .dateTime(ch.getStartTime())
+                                .callTime(ch.getCallTime())
+                                .build())
+                        .toList())
+                .status(record.getVolunteerRecordStatus())
+                .health(report == null ? null : report.getHealth())
+                .mentality(report == null ? null : report.getMentality())
+                .opinion(report == null ? null : report.getOpinion())
+                .build();
+    }
+
+    @Transactional
+    public void updateRecord(Long loginUserId, Long recordId, PatchVolunteerRecordRequest request) {
+        // 봉사자 정보 확인
+        Volunteer volunteer = volunteerRepository.findByUserId(loginUserId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+
+        // 기록 조회
+        VolunteerRecord record = volunteerRecordRepository.findById(recordId)
+                .orElseThrow(() -> new CustomException(BAD_REQUEST));
+
+        // 권한 체크: 기록의 매칭 봉사자와 로그인 사용자 일치 여부
+        if (!Objects.equals(record.getMatching().getVolunteer().getId(), volunteer.getId())) {
+            throw new CustomException(BAD_REQUEST);
+        }
+
+        // 기록 상태 업데이트 (null이 아닌 경우에만)
+        if (request.status() != null) {
+            record.updateStatus(request.status());
+        }
+
+        // 리포트 관련 필드가 하나라도 있는 경우에만 리포트 처리
+        if (request.health() != null || request.mentality() != null || request.opinion() != null) {
+            Report report = reportRepository.findByVolunteerRecord(record)
+                    .map(existingReport -> {
+                        // 기존 리포트가 있으면 null이 아닌 값들만 업데이트
+                        HealthLevel newHealth = request.health() != null ? request.health() : existingReport.getHealth();
+                        MentalityLevel newMentality = request.mentality() != null ? request.mentality() : existingReport.getMentality();
+                        String newOpinion = request.opinion() != null ? request.opinion() : existingReport.getOpinion();
+                        
+                        existingReport.updateReport(newHealth, newMentality, newOpinion);
+                        return existingReport;
+                    })
+                    .orElseGet(() -> {
+                        // 기존 리포트가 없으면 새로 생성 (null 값들은 기본값 또는 null로 처리)
+                        return Report.builder()
+                                .health(request.health())
+                                .mentality(request.mentality())
+                                .opinion(request.opinion())
+                                .volunteerRecord(record)
+                                .build();
+                    });
+            reportRepository.save(report);
+        }
+
+        // VolunteerRecord 변경사항 저장
+        volunteerRecordRepository.save(record);
+    }
 }
