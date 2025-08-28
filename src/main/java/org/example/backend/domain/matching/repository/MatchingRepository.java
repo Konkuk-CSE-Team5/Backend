@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface MatchingRepository extends JpaRepository<Matching, Long> {
     Optional<Matching> findBySeniorIdAndMatchingStatus(Long seniorId, MatchingStatus matchingStatus);
 
+    Optional<Matching> findTopBySeniorIdAndMatchingStatus(Long seniorId, MatchingStatus matchingStatus);
+
     Optional<Matching> findByVolunteerIdAndSeniorIdAndMatchingStatus(Long volunteerId, Long seniorId, MatchingStatus status);
 
     List<Matching> findAllByVolunteer(Volunteer volunteer);
@@ -19,4 +21,6 @@ public interface MatchingRepository extends JpaRepository<Matching, Long> {
     List<Matching> findAllBySeniorAndMatchingStatus(Senior senior, MatchingStatus matchingStatus);
     
     Optional<Matching> findBySeniorAndMatchingStatus(Senior senior, MatchingStatus matchingStatus);
+
+    Optional<Matching> findTopBySeniorOrderByIdDesc(Senior senior);
 }

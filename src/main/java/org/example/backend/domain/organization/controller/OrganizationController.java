@@ -6,10 +6,8 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.backend.domain.organization.dto.GetOrganizationMeResponse;
-import org.example.backend.domain.organization.dto.PatchOrganizationMeRequest;
-import org.example.backend.domain.organization.dto.GetOrganziationMainResponse;
-import org.example.backend.domain.organization.dto.RegisterOrganizationRequest;
+import org.example.backend.domain.organization.dto.*;
+import org.example.backend.domain.organization.service.GetOrgSeniorsService;
 import org.example.backend.domain.organization.service.OrganizationMeService;
 import org.example.backend.domain.organization.service.OrganizationMainService;
 import org.example.backend.domain.organization.service.RegisterOrganizationService;
@@ -32,6 +30,7 @@ public class OrganizationController {
     private final RegisterOrganizationService registerOrganizationService;
     private final OrganizationMeService organizationMeService;
     private final OrganizationMainService organizationMainService;
+    private final GetOrgSeniorsService getOrgSeniorsService;
 
     @Operation(
             summary = "기관 회원가입 API",
@@ -76,5 +75,26 @@ public class OrganizationController {
     @GetMapping("/main")
     public BaseResponse<GetOrganziationMainResponse> getMain(@Parameter(hidden = true) @LoginUserId Long userId){
         return new BaseResponse<>(organizationMainService.getMain(userId));
+    }
+
+    @Operation(
+            summary = "기관 어르신 등록 화면 조회",
+            description = "어르신 등록 화면을 조회하는 API"
+    )
+    @CustomExceptionDescription(MAIN)
+    @GetMapping("/me/seniors")
+    public BaseResponse<GetOrgSeniorsResponse> getOrgSeniors(@Parameter(hidden = true) @LoginUserId Long orgUserId){
+        return new BaseResponse(getOrgSeniorsService.getSeniors(orgUserId));
+    }
+
+    @Operation(
+            summary = "기관 어르신 관리 화면 조회",
+            description = "어르신 관리 화면을 조회하는 API"
+    )
+    @CustomExceptionDescription(MAIN)
+    @GetMapping("/me/seniors/{seniorId}")
+    public BaseResponse<GetSeniorManagePageResponse> getSeniorManagementPage(@Parameter(hidden = true) @LoginUserId Long orgUserId,
+                                                                             @PathVariable Long seniorId){
+        return new BaseResponse<>(getOrgSeniorsService.getSenior(orgUserId, seniorId));
     }
 }
