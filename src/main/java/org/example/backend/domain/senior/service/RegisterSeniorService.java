@@ -38,7 +38,14 @@ public class RegisterSeniorService {
     @Transactional
     public RegisterSeniorResponse register(Long organizationUserId, RegisterSeniorRequest request) {
         log.info("[register] organizationUserId = {}, request = {}", organizationUserId, request);
-        
+
+        if (request.startDate() == null || request.endDate() == null) {
+            throw new IllegalArgumentException("시작/종료일은 필수입니다.");
+        }
+        if (request.startDate().isAfter(request.endDate())) {
+            throw new IllegalArgumentException("종료일은 시작일 이후여야 합니다.");
+        }
+
         // 기관 정보 조회
         Organization organization = organizationRepository.findByUserId(organizationUserId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
@@ -71,15 +78,25 @@ public class RegisterSeniorService {
 
         scheduleRepository.save(schedule);
 
-        for(String dayStr : request.workDays()){
-            ScheduleDetail detail = ScheduleDetail.builder().day(convertStringToDay(dayStr))
-                    .startTime(request.workStartTime())
-                    .endTime(request.workEndTime())
-                    .schedule(schedule)
-                    .build();
-            scheduleDetailRepository.save(detail);
+        if (request.workDays() != null && !request.workDays().isEmpty()) {
+
+            if (request.workStartTime() == null || request.workEndTime() == null) {
+                throw new IllegalArgumentException("근무 시작/종료 시간은 필수입니다.");
+            }
+            if (!request.workStartTime().isBefore(request.workEndTime())) {
+                throw new IllegalArgumentException("근무 종료 시간은 시작 시간보다 이후여야 합니다.");
+            }
+
+            for (String dayStr : request.workDays()) {
+                ScheduleDetail detail = ScheduleDetail.builder().day(convertStringToDay(dayStr))
+                        .startTime(request.workStartTime())
+                        .endTime(request.workEndTime())
+                        .schedule(schedule)
+                        .build();
+                scheduleDetailRepository.save(detail);
+            }
         }
-        
+
         log.info("[register] 어르신 등록 완료 - seniorId: {}, code: {}", savedSenior.getId(), seniorCode);
         
         return new RegisterSeniorResponse(seniorCode, organization.getName());
