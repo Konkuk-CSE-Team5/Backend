@@ -65,13 +65,17 @@ public class VolunteerRecordController {
             @PathVariable Long recordId) {
         return new BaseResponse<>(volunteerRecordService.getRecordUpdateForm(loginUserId, recordId));
     }
-//
-//    @PatchMapping("{recordId}")
-//    public BaseResponse<Void> updateRecord(
-//            @LoginUserId Long loginUserId,
-//            @PathVariable Long recordId,
-//            @RequestBody @Valid PatchVolunteerRecordRequest request) {
-//        volunteerRecordService.updateRecord(loginUserId, recordId, request);
-//        return new BaseResponse<>(null);
-//    }
+    @Operation(
+            summary = "봉사 기록 수정",
+            description = "특정 봉사 기록의 상태, 건강, 심리, 의견을 수정하는 API"
+    )
+    @CustomExceptionDescription(DEFAULT)
+    @PatchMapping("{recordId}")
+    public BaseResponse<Void> updateRecord(
+            @LoginUserId @Parameter(hidden = true) Long loginUserId,
+            @PathVariable Long recordId,
+            @RequestBody @Valid PatchVolunteerRecordRequest request) {
+        volunteerRecordService.updateRecord(loginUserId, recordId, request);
+        return new BaseResponse<>(null);
+    }
 }
