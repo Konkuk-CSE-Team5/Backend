@@ -5,32 +5,31 @@ import org.example.backend.global.util.DurationUtil;
 import org.example.backend.global.util.LocalDateTimeUtil;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record GetSeniorMatchingRecords (
+        Long seniorId,
         String seniorName,
-        List<Record> records
-){
-    public static GetSeniorMatchingRecords from(String seniorName, String volunteerName, List<VolunteerRecord> matchings) {
-        List<Record> collect = matchings.stream()
-                .map(match -> Record.entityToDto(volunteerName, match))
-                .collect(Collectors.toList());
-        return new GetSeniorMatchingRecords(seniorName,
-                collect);
-    }
+        String volunteerName,
+        String matchingStatus,
+        SummaryDto summary,
+        List<RecordDto> records
 
-    public record Record(
+){
+    public record SummaryDto(
+            Long totalCalls,
+            String totalDuration
+    ){
+
+    }
+    public record RecordDto(
             Long recordId,
             String date,
-            String volunteerName,
             String status,
             String duration
-    ){
-        private static Record entityToDto(String volunteerName, VolunteerRecord entity){
-            return new Record (
-                    entity.getId(),
-                    LocalDateTimeUtil.toFormattedString(entity.getCreatedAt()),
-                    volunteerName,
+    ) {
+        public static RecordDto entityToDto(VolunteerRecord entity) {
+            return new RecordDto(entity.getId(),
+                    LocalDateTimeUtil.toFormattedString(entity.getScheduledDate()),
                     entity.getVolunteerRecordStatus().name(),
                     DurationUtil.toHHmmss(entity.getTotalCallTime()));
         }
