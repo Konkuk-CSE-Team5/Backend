@@ -41,8 +41,8 @@ public class VolunteerRecord extends BaseEntity {
     @Convert(converter = DurationToSecondsConverter.class)
     private Duration totalCallTime;
 
-    @OneToOne
-    @JoinColumn(name = "schedule_detail_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "schedule_detail_id", nullable = false)
     private ScheduleDetail scheduleDetail;
 
     @OneToOne(mappedBy = "volunteerRecord")

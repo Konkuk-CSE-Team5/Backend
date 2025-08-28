@@ -20,6 +20,7 @@ import org.example.backend.global.common.exception.CustomException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.example.backend.global.common.response.status.BaseExceptionResponseStatus.BAD_REQUEST;
 import static org.example.backend.global.common.response.status.BaseExceptionResponseStatus.ENTITY_NOT_FOUND;

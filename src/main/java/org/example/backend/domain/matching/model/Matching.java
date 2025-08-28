@@ -33,5 +33,9 @@ public class Matching extends BaseEntity {
     public void updateVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
     }
+    
+    public void updateMatchingStatus(MatchingStatus matchingStatus) {
+        this.matchingStatus = matchingStatus;
+    }
 
 }

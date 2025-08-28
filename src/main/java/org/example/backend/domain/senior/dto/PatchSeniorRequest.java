@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -26,7 +27,7 @@ public record PatchSeniorRequest(
         @Schema(description = "봉사 종료일", example = "2025-01-30", nullable = true)
         LocalDate endDate,
         
-        @ArraySchema(arraySchema = @Schema(description = "스케줄 목록"), minItems = 0, nullable = true)
+        @ArraySchema(arraySchema = @Schema(description = "스케줄 목록"), minItems = 0)
         List<ScheduleDto> schedule,
         
         @Schema(description = "특이사항", example = "당뇨, 보조기 사용", nullable = true)

@@ -51,5 +51,8 @@ public interface VolunteerRecordRepository extends JpaRepository<VolunteerRecord
 
     // 특정 매칭 + 오늘 날짜에 해당하는 VolunteerRecord 조회
     Optional<VolunteerRecord> findByMatchingAndScheduledDate(Matching matching, LocalDate scheduledDate);
+    
+    // 특정 스케줄 상세 정보 + 날짜에 해당하는 VolunteerRecord 존재 여부 확인
+    boolean existsByScheduleDetailAndScheduledDate(org.example.backend.domain.schedule.model.ScheduleDetail scheduleDetail, LocalDate scheduledDate);
 
 }
