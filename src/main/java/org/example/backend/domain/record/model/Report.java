@@ -24,7 +24,7 @@ public class Report extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private mentalityLevel mentality;
+    private MentalityLevel mentality;
 
     @Column(columnDefinition = "TEXT")
     private String opinion;
