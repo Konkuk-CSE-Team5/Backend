@@ -31,6 +31,8 @@ public record RegisterSeniorRequest(
         LocalTime workStartTime,
         
         @NotNull(message = "봉사 종료 시간은 필수입니다")
-        LocalTime workEndTime
+        LocalTime workEndTime,
+
+        String notes
 ) {
 }
