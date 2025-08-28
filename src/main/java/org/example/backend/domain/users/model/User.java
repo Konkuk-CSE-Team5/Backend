@@ -24,4 +24,8 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    public boolean isSamePassword(String password) {
+        return this.password.equals(password);
+    }
 }

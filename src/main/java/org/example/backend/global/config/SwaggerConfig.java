@@ -71,7 +71,7 @@ public class SwaggerConfig {
                                     return ExampleHolder.builder()
                                             .holder(
                                                     getSwaggerExample(baseExceptionResponseStatus))
-                                            .code(baseExceptionResponseStatus.getCode())
+                                            .code(baseExceptionResponseStatus.getStatus())
                                             .name(baseExceptionResponseStatus.toString())
                                             .build();
                                 }

@@ -19,7 +19,12 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     // 2100 : JWT 토큰 에러
     INVALID_JWT(HttpStatus.UNAUTHORIZED.value(), 2100, "올바르지 않은 토큰입니다."),
     EXPIRED_JWT(HttpStatus.UNAUTHORIZED.value(), 2101, "만료된 토큰입니다"),
-    JWT_NOT_FOUND(HttpStatus.UNAUTHORIZED.value(), 2102, "토큰을 찾을 수 없습니다");
+    JWT_NOT_FOUND(HttpStatus.UNAUTHORIZED.value(), 2102, "토큰을 찾을 수 없습니다"),
+
+    // 3000: Auth 관련 에러
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED.value(), 3000, "로그인에 실패했습니다"),
+
+    DUPLICATE_USERNAME(HttpStatus.CONFLICT.value(), 3001, "이미 존재하는 아이디로 가입할 수 없습니다" );
 
 
     private final int status;
