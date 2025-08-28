@@ -32,6 +32,7 @@ public class OrganizationMeService {
         Organization organization = organizationRepository.findByUser(user).orElseThrow(() -> new CustomException(BAD_REQUEST));
 
         GetOrganizationMeResponse.ProfileGetDto profileGetDto = GetOrganizationMeResponse.ProfileGetDto.builder()
+                .userId(user.getUsername())
                 .name(organization.getName())
                 .manager(organization.getManager())
                 .managerContact(organization.getManagerPhone())
