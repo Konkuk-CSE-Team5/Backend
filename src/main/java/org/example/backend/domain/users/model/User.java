@@ -5,6 +5,7 @@ import lombok.*;
 import org.example.backend.global.common.model.BaseEntity;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
