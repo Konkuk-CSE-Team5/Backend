@@ -24,7 +24,7 @@ public class Schedule extends BaseEntity {
     @Column(nullable = false)
     private LocalDate endDate;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "matching_id", nullable = false)
     private Matching matching;
 }
