@@ -4,6 +4,9 @@ import java.time.Duration;
 
 public class DurationUtil {
     public static String toHHmmss(Duration d) {
+        if(d == null){
+            return "00:00:00";
+        }
         long h = d.toHours();
         long m = d.toMinutesPart(); // Java 9+
         long s = d.toSecondsPart();
