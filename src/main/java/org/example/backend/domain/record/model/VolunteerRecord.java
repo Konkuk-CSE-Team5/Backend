@@ -21,7 +21,7 @@ public class VolunteerRecord extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private VolunteerRecordStatus status;
+    private VolunteerRecordStatus volunteerRecordStatus;
 
     private LocalDateTime startTime;
 
