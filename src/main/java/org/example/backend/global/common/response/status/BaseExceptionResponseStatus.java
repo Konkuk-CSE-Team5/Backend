@@ -15,6 +15,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     API_NOT_FOUND(HttpStatus.NOT_FOUND.value(),2003, "존재하지 않는 API입니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED.value(), 2004, "유효하지 않은 Http 메서드입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), 2005, "서버 내부 오류입니다."),
+    ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND.value(), 2006, "존재하지 않는 엔티티 입니다."),
 
     // 2100 : JWT 토큰 에러
     INVALID_JWT(HttpStatus.UNAUTHORIZED.value(), 2100, "올바르지 않은 토큰입니다."),

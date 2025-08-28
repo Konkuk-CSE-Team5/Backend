@@ -2,6 +2,7 @@ package org.example.backend.domain.record.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.backend.domain.matching.model.Matching;
 import org.example.backend.domain.schedule.model.ScheduleDetail;
 import org.example.backend.global.common.model.BaseEntity;
 import org.example.backend.global.convertor.DurationToSecondsConverter;
@@ -32,4 +33,11 @@ public class VolunteerRecord extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "schedule_detail_id")
     private ScheduleDetail scheduleDetail;
+
+    @OneToOne(mappedBy = "volunteerRecord")
+    private Report report;
+
+    @ManyToOne
+    @JoinColumn(name = "matching_id")
+    private Matching matching;
 }
