@@ -59,4 +59,8 @@ public class VolunteerRecord extends BaseEntity {
     public void updateStatus(VolunteerRecordStatus status) {
         this.volunteerRecordStatus = status;
     }
+
+    public void updateStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
 }
