@@ -29,4 +29,8 @@ public class User extends BaseEntity {
     public boolean isSamePassword(String password) {
         return this.password.equals(password);
     }
+
+    public boolean isSameRole(String role) {
+        return this.role.name().equals(role);
+    }
 }
