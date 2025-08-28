@@ -49,8 +49,8 @@ public class GetSeniorUpdateFormService {
             throw new CustomException(ENTITY_NOT_FOUND);
         }
         
-        // 어르신의 활성 매칭 조회
-        Matching matching = matchingRepository.findBySeniorIdAndMatchingStatus(seniorId, MatchingStatus.ACTIVE)
+        // 어르신의 매칭 조회
+        Matching matching = matchingRepository.findBySenior(senior)
                 .orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
         
         // 매칭의 스케줄 조회
