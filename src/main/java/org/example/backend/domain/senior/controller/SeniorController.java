@@ -2,14 +2,15 @@ package org.example.backend.domain.senior.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.backend.domain.senior.dto.GetSeniorMatchingRecords;
+import org.example.backend.domain.senior.dto.GetSeniorUpdateFormResponse;
 import org.example.backend.domain.senior.dto.PatchSeniorRequest;
 import org.example.backend.domain.senior.dto.RegisterSeniorRequest;
 import org.example.backend.domain.senior.dto.RegisterSeniorResponse;
+import org.example.backend.domain.senior.service.GetSeniorUpdateFormService;
 import org.example.backend.domain.senior.service.OrganizationSeniorService;
 import org.example.backend.domain.senior.service.RegisterSeniorService;
 import org.example.backend.domain.senior.service.UpdateSeniorService;
@@ -33,6 +34,7 @@ public class SeniorController {
     private final OrganizationSeniorService seniorService;
     private final RegisterSeniorService registerSeniorService;
     private final UpdateSeniorService updateSeniorService;
+    private final GetSeniorUpdateFormService getSeniorUpdateFormService;
 
     // 기관 어르신 활동 기록 조회
 
@@ -70,5 +72,17 @@ public class SeniorController {
             @RequestBody @Valid PatchSeniorRequest request) {
         updateSeniorService.updateSenior(loginUserId, seniorId, request);
         return new BaseResponse<>(null);
+    }
+
+    @Operation(
+            summary = "어르신 매칭 정보 수정 화면 조회",
+            description = "어르신과의 매칭 정보 수정 화면을 조회하는 API"
+    )
+    @CustomExceptionDescription(SwaggerResponseDescription.DEFAULT)
+    @GetMapping("/{seniorId}/updateForm")
+    public BaseResponse<GetSeniorUpdateFormResponse> getSeniorUpdateForm(
+            @LoginUserId @Parameter(hidden = true) Long loginUserId,
+            @PathVariable Long seniorId) {
+        return new BaseResponse<>(getSeniorUpdateFormService.getSeniorUpdateForm(loginUserId, seniorId));
     }
 }
