@@ -41,7 +41,7 @@ public record GetVolunteerRecordDetailResponse(
             @JsonSerialize(using = DurationSerializer.class)
             Duration duration,
 
-            @Schema(description = "기록 상태", example = "COMPLETED")
+            @Schema(description = "기록 상태", example = "COMPLETE")
             VolunteerRecordStatus status
     ) {}
 }

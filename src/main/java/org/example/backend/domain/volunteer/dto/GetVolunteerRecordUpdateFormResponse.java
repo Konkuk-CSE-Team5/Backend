@@ -22,16 +22,16 @@ public record GetVolunteerRecordUpdateFormResponse(
         @ArraySchema(arraySchema = @Schema(description = "통화 기록 목록"), minItems = 0)
         List<CallHistoryDto> callHistory,
 
-        @Schema(description = "수행 여부", allowableValues = {"COMPLETE", "ABSENT", "NOT_CONDUCTED"})
+        @Schema(description = "수행 여부", allowableValues = {"COMPLETE", "ABSENT", "NOT_CONDUCTED"}, nullable = true)
         VolunteerRecordStatus status,
 
-        @Schema(description = "건강 상태", allowableValues = {"GOOD", "NORMAL", "BAD"})
+        @Schema(description = "건강 상태", allowableValues = {"GOOD", "NORMAL", "BAD"}, nullable = true)
         HealthLevel health,
 
-        @Schema(description = "심리 상태", allowableValues = {"GOOD", "NORMAL", "BAD"})
+        @Schema(description = "심리 상태", allowableValues = {"GOOD", "NORMAL", "BAD"}, nullable = true)
         MentalityLevel mentality,
 
-        @Schema(description = "봉사자 의견")
+        @Schema(description = "봉사자 의견", nullable = true)
         String opinion
 ) {
     @Builder
