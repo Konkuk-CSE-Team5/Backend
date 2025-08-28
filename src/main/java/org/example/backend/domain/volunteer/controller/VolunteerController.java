@@ -56,7 +56,7 @@ public class VolunteerController {
             description = "봉사자의 설정화면 정보를 조회하는 API"
     )
     @CustomExceptionDescription(DEFAULT)
-    @PatchMapping("profile")
+    @PatchMapping("me")
     public BaseResponse<Void> patchVolunteerMe(
             @LoginUserId @Parameter(hidden = true) Long loginUserId,
             @RequestBody @jakarta.validation.Valid PatchVolunteerMeRequest request) {
