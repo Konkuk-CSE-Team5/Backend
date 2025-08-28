@@ -29,7 +29,7 @@ public class Report extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String opinion;
 
-    @OneToOne
-    @JoinColumn(name = "volunteer_record_id")
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "volunteer_record_id", nullable = false, unique = true)
     private VolunteerRecord volunteerRecord;
 }
