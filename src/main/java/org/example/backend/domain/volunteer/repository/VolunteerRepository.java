@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
     Optional<Volunteer> findByUser(User user);
+
+    Optional<Volunteer> findByUserId(Long userId);
 }

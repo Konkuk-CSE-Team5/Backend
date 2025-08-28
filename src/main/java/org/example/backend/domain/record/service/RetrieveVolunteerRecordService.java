@@ -8,6 +8,7 @@ import org.example.backend.domain.record.model.VolunteerRecord;
 import org.example.backend.domain.record.model.VolunteerRecordStatus;
 import org.example.backend.domain.record.repository.VolunteerRecordRepository;
 import org.example.backend.global.common.exception.CustomException;
+import org.example.backend.global.util.DurationUtil;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -34,7 +35,7 @@ public class RetrieveVolunteerRecordService {
                     volunteerRecord.getMatching().getSenior().getName(),
                     volunteerRecord.getMatching().getVolunteer().getName(),
                     volunteerRecord.getStartTime(),
-                    toHHmmss(volunteerRecord.getTotalCallTime()),
+                    DurationUtil.toHHmmss(volunteerRecord.getTotalCallTime()),
                     report.getHealth().name(),
                     report.getMentality().name(),
                     report.getOpinion());
@@ -53,13 +54,7 @@ public class RetrieveVolunteerRecordService {
                 .seniorName(volunteerRecord.getMatching().getSenior().getName())
                 .volunteerName(volunteerRecord.getMatching().getVolunteer().getName())
                 .callDateTime(volunteerRecord.getStartTime())
-                .totalCallTime(toHHmmss(volunteerRecord.getTotalCallTime()))
+                .totalCallTime(DurationUtil.toHHmmss(volunteerRecord.getTotalCallTime()))
                 .build();
-    }
-    private String toHHmmss(Duration d) {
-        long h = d.toHours();
-        long m = d.toMinutesPart(); // Java 9+
-        long s = d.toSecondsPart();
-        return String.format("%02d:%02d:%02d", h, m, s);
     }
 }
