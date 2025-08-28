@@ -14,6 +14,7 @@ import org.example.backend.domain.record.repository.VolunteerRecordRepository;
 import org.example.backend.domain.senior.model.Senior;
 import org.example.backend.domain.senior.repository.SeniorRepository;
 import org.example.backend.global.common.exception.CustomException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
@@ -115,7 +116,8 @@ public class OrganizationMainService {
                         .map(m -> {
                             // 다음 예정: PENDING 중 오늘/현재 이후 최가까운 1건
                             LocalDateTime nextSchedule = volunteerRecordRepository
-                                    .findNextPending(m, VolunteerRecordStatus.PENDING, today, nowTime)
+                                    .findNextPending(m, VolunteerRecordStatus.PENDING, today, nowTime, PageRequest.of(0, 1))
+                                    .stream().findFirst()
                                     .map(vr -> LocalDateTime.of(vr.getScheduledDate(), vr.getScheduledTime()))
                                     .orElse(null);
 
