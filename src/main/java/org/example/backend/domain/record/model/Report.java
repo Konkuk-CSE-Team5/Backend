@@ -18,9 +18,11 @@ public class Report extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private HealthLevel health;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private mentalityLevel mentality;
 

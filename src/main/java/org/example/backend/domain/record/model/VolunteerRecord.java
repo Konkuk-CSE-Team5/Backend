@@ -19,6 +19,7 @@ public class VolunteerRecord extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private VolunteerRecordStatus status;
 
