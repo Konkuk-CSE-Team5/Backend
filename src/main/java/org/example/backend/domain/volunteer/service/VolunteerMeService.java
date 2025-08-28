@@ -44,11 +44,9 @@ public class VolunteerMeService {
         Volunteer volunteer = volunteerRepository.findByUser(user).orElseThrow(() -> new CustomException(BAD_REQUEST));
 
         // 봉사자 정보 수정
-        user.setPassword(request.password());
-        volunteer.setName(request.name());
-        volunteer.setBirthday(request.birthday());
-        volunteer.setGender(request.gender());
-        volunteer.setPhone(request.contact());
+        if (request.password() != null && !request.password().isBlank()) {
+            user.setPassword(request.password());
+        }
 
         if (request.name() != null && !request.name().isBlank()) {
             volunteer.setName(request.name());
