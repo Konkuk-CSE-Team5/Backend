@@ -3,9 +3,9 @@ package org.example.backend.domain.volunteer.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.backend.domain.matching.MatchingRepository;
 import org.example.backend.domain.matching.model.Matching;
 import org.example.backend.domain.matching.model.MatchingStatus;
+import org.example.backend.domain.matching.repository.MatchingRepository;
 import org.example.backend.domain.record.model.CallHistory;
 import org.example.backend.domain.record.model.Report;
 import org.example.backend.domain.record.model.VolunteerRecord;
@@ -16,7 +16,6 @@ import org.example.backend.domain.senior.model.Senior;
 import org.example.backend.domain.senior.repository.SeniorRepository;
 
 import org.example.backend.domain.volunteer.dto.GetVolunteerRecordResponse;
-import org.example.backend.domain.volunteer.dto.GetVolunteerRecordDetailResponse;
 
 import org.example.backend.domain.volunteer.dto.PostVolunteerRecordRequest;
 import org.example.backend.domain.volunteer.model.Volunteer;
