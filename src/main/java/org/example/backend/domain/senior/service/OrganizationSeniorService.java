@@ -43,7 +43,7 @@ public class OrganizationSeniorService {
         }
 
         // 현재 존재하는 매칭 조회
-        Matching matching = matchingRepository.findBySeniorIdAndMatchingStatus(seniorId, MatchingStatus.ACTIVE).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
+        Matching matching = matchingRepository.findTopBySeniorIdAndMatchingStatus(seniorId, MatchingStatus.ACTIVE).orElseThrow(() -> new CustomException(ENTITY_NOT_FOUND));
 
         String seniorName = matching.getSenior().getName();
         String volunteerName = matching.getVolunteer().getName();

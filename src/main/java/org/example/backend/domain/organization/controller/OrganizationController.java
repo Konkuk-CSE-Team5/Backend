@@ -82,9 +82,19 @@ public class OrganizationController {
             description = "어르신 등록 화면을 조회하는 API"
     )
     @CustomExceptionDescription(MAIN)
-    @Parameter(in = ParameterIn.HEADER, required = true, name = "Authorization", description = "API 엑세스 토큰", example = "Bearer asdf1234")
     @GetMapping("/me/seniors")
     public BaseResponse<GetOrgSeniorsResponse> getOrgSeniors(@Parameter(hidden = true) @LoginUserId Long orgUserId){
         return new BaseResponse(getOrgSeniorsService.getSeniors(orgUserId));
+    }
+
+    @Operation(
+            summary = "기관 어르신 관리 화면 조회",
+            description = "어르신 관리 화면을 조회하는 API"
+    )
+    @CustomExceptionDescription(MAIN)
+    @GetMapping("/me/seniors/{seniorId}")
+    public BaseResponse<GetSeniorManagePageResponse> getSeniorManagementPage(@Parameter(hidden = true) @LoginUserId Long orgUserId,
+                                                                             @PathVariable Long seniorId){
+        return new BaseResponse<>(getOrgSeniorsService.getSenior(orgUserId, seniorId));
     }
 }
