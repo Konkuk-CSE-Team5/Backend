@@ -117,6 +117,7 @@ public class OrganizationMainService {
                             // 다음 예정: PENDING 중 오늘/현재 이후 최가까운 1건
                             LocalDateTime nextSchedule = volunteerRecordRepository
                                     .findNextPending(m, VolunteerRecordStatus.PENDING, today, nowTime, PageRequest.of(0, 1))
+                                    .stream().findFirst()
                                     .map(vr -> LocalDateTime.of(vr.getScheduledDate(), vr.getScheduledTime()))
                                     .orElse(null);
 

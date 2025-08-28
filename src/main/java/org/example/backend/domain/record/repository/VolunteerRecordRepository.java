@@ -33,7 +33,7 @@ public interface VolunteerRecordRepository extends JpaRepository<VolunteerRecord
           )
         order by vr.scheduledDate asc, vr.scheduledTime asc
         """)
-    Optional<VolunteerRecord> findNextPending(
+    List<VolunteerRecord> findNextPending(
             @Param("matching") Matching matching,
             @Param("status") VolunteerRecordStatus status,
             @Param("today") LocalDate today,
