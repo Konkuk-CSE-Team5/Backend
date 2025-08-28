@@ -20,6 +20,7 @@ import static org.example.backend.global.common.response.status.BaseExceptionRes
 public class VolunteerMeService {
     private final UserRepository userRepository;
     private final VolunteerRepository volunteerRepository;
+
     public GetVolunteerMeResponse get(Long loginUserId) {
 
         // 봉사자 정보 조회
@@ -48,6 +49,19 @@ public class VolunteerMeService {
         volunteer.setBirthday(request.birthday());
         volunteer.setGender(request.gender());
         volunteer.setPhone(request.contact());
+
+        if (request.name() != null && !request.name().isBlank()) {
+            volunteer.setName(request.name());
+        }
+        if (request.birthday() != null) {
+            volunteer.setBirthday(request.birthday());
+        }
+        if (request.gender() != null) {
+            volunteer.setGender(request.gender());
+        }
+        if (request.contact() != null && !request.contact().isBlank()) {
+            volunteer.setPhone(request.contact());
+        }
         userRepository.save(user);
         volunteerRepository.save(volunteer);
 
