@@ -4,6 +4,7 @@ import org.example.backend.domain.matching.model.Matching;
 import org.example.backend.domain.organization.model.Organization;
 import org.example.backend.domain.record.model.VolunteerRecord;
 import org.example.backend.domain.record.model.VolunteerRecordStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,8 +37,8 @@ public interface VolunteerRecordRepository extends JpaRepository<VolunteerRecord
             @Param("matching") Matching matching,
             @Param("status") VolunteerRecordStatus status,
             @Param("today") LocalDate today,
-            @Param("nowTime") LocalTime nowTime
-    );
+            @Param("nowTime") LocalTime nowTime,
+            Pageable pageable);
 
     // 이번 달 전체(상태 무관)
     int countByMatchingAndScheduledDateGreaterThanEqualAndScheduledDateLessThan(
