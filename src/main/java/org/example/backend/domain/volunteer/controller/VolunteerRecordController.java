@@ -33,7 +33,7 @@ public class VolunteerRecordController {
     public BaseResponse<GetVolunteerRecordResponse> getRecords(@LoginUserId @Parameter(hidden = true) Long loginUserId) {
         return new BaseResponse<>(volunteerRecordService.getRecords(loginUserId));
     }
-    @PatchMapping
+    @PostMapping
     public BaseResponse<Void> setRecord(
             @LoginUserId @Parameter(hidden = true) Long loginUserId,
             @RequestBody @Valid PostVolunteerRecordRequest request

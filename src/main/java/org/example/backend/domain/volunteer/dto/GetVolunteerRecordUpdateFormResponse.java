@@ -19,6 +19,9 @@ import java.util.List;
 @Builder
 @Schema(name = "GetVolunteerRecordUpdateFormResponse", description = "봉사 기록 수정 폼 응답")
 public record GetVolunteerRecordUpdateFormResponse(
+        @Schema(description = "어르신 성함", example = "김순자")
+        String name,
+
         @ArraySchema(arraySchema = @Schema(description = "통화 기록 목록"), minItems = 0)
         List<CallHistoryDto> callHistory,
 
