@@ -14,7 +14,7 @@ spring:
       on-profile: "localDB"
 
   datasource:
-    url: ${DATASOURCE_URL}?serverTimezone=Asia/Seoul
+    url: ${DATASOURCE_URL}?serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
 
@@ -31,6 +31,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+        connection:
+          characterEncoding: utf8
+          useUnicode: true
+        jdbc:
+          time_zone: Asia/Seoul
   servlet:
     multipart:
       enabled: true
@@ -45,7 +50,7 @@ spring:
       on-profile: "devDB"
 
   datasource:
-    url: ${DATASOURCE_URL_DEV}?serverTimezone=Asia/Seoul
+    url: ${DATASOURCE_URL_DEV}?serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
 
@@ -62,6 +67,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+        connection:
+          characterEncoding: utf8
+          useUnicode: true
+        jdbc:
+          time_zone: Asia/Seoul
   servlet:
     multipart:
       enabled: true
