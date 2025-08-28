@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.backend.domain.schedule.model.ScheduleDetail;
 import org.example.backend.global.common.model.BaseEntity;
+import org.example.backend.global.convertor.DurationToSecondsConverter;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Getter
 @Builder
@@ -25,7 +26,8 @@ public class VolunteerRecord extends BaseEntity {
 
     private LocalDateTime startTime;
 
-    private LocalTime totalCallTime;
+    @Convert(converter = DurationToSecondsConverter.class)
+    private Duration totalCallTime;
 
     @OneToOne
     @JoinColumn(name = "schedule_detail_id")

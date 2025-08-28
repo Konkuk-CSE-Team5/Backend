@@ -3,7 +3,9 @@ package org.example.backend.domain.record.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.backend.global.common.model.BaseEntity;
+import org.example.backend.global.convertor.DurationToSecondsConverter;
 
+import java.time.Duration;
 import java.time.LocalTime;
 
 @Getter
@@ -19,7 +21,8 @@ public class CallHistory extends BaseEntity {
     @Column(nullable = false)
     private LocalTime startTime;
 
-    private LocalTime callTime;
+    @Convert(converter = DurationToSecondsConverter.class)
+    private Duration callTime;
 
     @ManyToOne
     @JoinColumn(name = "volunteer_record_id")
