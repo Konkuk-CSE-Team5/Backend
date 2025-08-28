@@ -10,7 +10,10 @@ import org.example.backend.domain.volunteer.dto.RegisterVolunteerRequest;
 import org.example.backend.domain.volunteer.model.Gender;
 import org.example.backend.domain.volunteer.model.Volunteer;
 import org.example.backend.domain.volunteer.repository.VolunteerRepository;
+import org.example.backend.global.common.exception.CustomException;
 import org.springframework.stereotype.Service;
+
+import static org.example.backend.global.common.response.status.BaseExceptionResponseStatus.DUPLICATE_USERNAME;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,6 +24,10 @@ public class RegisterVolunteerService {
     @Transactional
     public void register(RegisterVolunteerRequest request) {
         log.info("[register] request = {}", request);
+
+        if(userRepository.existsByUsername(request.username())){
+            throw new CustomException(DUPLICATE_USERNAME);
+        }
 
         // 유저 정보를 저장
         User user = User.builder().username(request.username())
