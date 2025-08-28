@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import org.example.backend.domain.record.model.HealthLevel;
-import org.example.backend.domain.record.model.MentalityLevel;
 import org.example.backend.domain.record.model.VolunteerRecordStatus;
 import org.example.backend.global.util.DurationDeserializer;
 import org.example.backend.global.util.DurationSerializer;
@@ -19,31 +17,31 @@ import java.util.List;
 @Builder
 @Schema(name = "GetVolunteerRecordDetailResponse", description = "봉사 기록 상세 응답")
 public record GetVolunteerRecordDetailResponse(
-        @ArraySchema(arraySchema = @Schema(description = "통화 기록 목록"), minItems = 0)
-        List<CallHistoryDto> callHistory,
+        @Schema(description = "어르신 ID", example = "123")
+        Long seniorId,
 
-        @Schema(description = "수행 여부", allowableValues = {"COMPLETE", "ABSENT", "NOT_CONDUCTED"})
-        VolunteerRecordStatus status,
+        @Schema(description = "어르신 이름", example = "김순자")
+        String seniorName,
 
-        @Schema(description = "건강 상태", allowableValues = {"GOOD", "NORMAL", "BAD"})
-        HealthLevel health,
-
-        @Schema(description = "심리 상태", allowableValues = {"GOOD", "NORMAL", "BAD"})
-        MentalityLevel mentality,
-
-        @Schema(description = "봉사자 의견")
-        String opinion
+        @ArraySchema(arraySchema = @Schema(description = "봉사 기록 목록"), minItems = 0)
+        List<Record> records
 ) {
     @Builder
-    @Schema(name = "CallHistory", description = "단일 통화 기록")
-    public record CallHistoryDto(
-            @Schema(description = "통화 시작 시각(ISO-8601)", example = "2025-08-26T19:32:00")
+    @Schema(name = "Record", description = "개별 봉사 기록")
+    public record Record(
+            @Schema(description = "기록 ID", example = "1")
+            Long recordId,
+
+            @Schema(description = "봉사/통화 일시(ISO-8601)", example = "2025-08-26T19:32:00")
             @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
             LocalDateTime dateTime,
 
-            @Schema(description = "통화 시간(HH:mm:ss)", example = "00:07:12")
+            @Schema(description = "통화 시간(HH:mm:ss), 미실시/부재중이면 null 또는 00:00:00", example = "00:12:30", nullable = true)
             @JsonDeserialize(using = DurationDeserializer.class)
             @JsonSerialize(using = DurationSerializer.class)
-            Duration callTime
+            Duration duration,
+
+            @Schema(description = "기록 상태", example = "COMPLETED")
+            VolunteerRecordStatus status
     ) {}
 }

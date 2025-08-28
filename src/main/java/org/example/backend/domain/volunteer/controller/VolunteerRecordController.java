@@ -42,17 +42,17 @@ public class VolunteerRecordController {
         return new BaseResponse<>(null);
     }
 
-//    @Operation(
-//            summary = "봉사 기록 상세 조회",
-//            description = "특정 봉사 기록의 상세 정보를 조회하는 API"
-//    )
-//    @CustomExceptionDescription(DEFAULT)
-//    @GetMapping("{recordId}")
-//    public BaseResponse<GetVolunteerRecordDetailResponse> getRecord(
-//            @LoginUserId @Parameter(hidden = true) Long loginUserId,
-//            @PathVariable Long recordId) {
-//        return new BaseResponse<>(volunteerRecordService.getRecord(loginUserId, recordId));
-//    }
+    @Operation(
+            summary = "봉사 기록 상세 조회",
+            description = "특정 봉사 기록의 상세 정보를 조회하는 API"
+    )
+    @CustomExceptionDescription(DEFAULT)
+    @GetMapping("{recordId}")
+    public BaseResponse<GetVolunteerRecordDetailResponse> getRecord(
+            @LoginUserId @Parameter(hidden = true) Long loginUserId,
+            @PathVariable Long recordId) {
+        return new BaseResponse<>(volunteerRecordService.getRecord(loginUserId, recordId));
+    }
 //
 //    @PatchMapping("{recordId}")
 //    public BaseResponse<Void> updateRecord(
