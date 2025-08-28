@@ -17,6 +17,8 @@ public class DurationToSecondsConverter implements AttributeConverter<Duration, 
 
     @Override
     public Duration convertToEntityAttribute(Long dbData) {
-        return dbData == null ? null : Duration.ofSeconds(dbData);
+        if (dbData == null) return null;
+        if (dbData < 0) throw new IllegalArgumentException("duration must be >= 0");
+        return Duration.ofSeconds(dbData);
     }
 }
