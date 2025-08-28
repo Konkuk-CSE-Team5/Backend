@@ -2,7 +2,7 @@ package org.example.backend.domain.senior.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.backend.domain.matching.MatchingRepository;
+import org.example.backend.domain.matching.repository.MatchingRepository;
 import org.example.backend.domain.matching.model.Matching;
 import org.example.backend.domain.matching.model.MatchingStatus;
 import org.example.backend.domain.record.model.VolunteerRecord;

@@ -8,7 +8,9 @@ import org.example.backend.global.common.model.BaseEntity;
 import org.example.backend.global.convertor.DurationToSecondsConverter;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Builder
@@ -24,6 +26,12 @@ public class VolunteerRecord extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private VolunteerRecordStatus volunteerRecordStatus;
+
+    @Column(nullable = false)
+    private LocalDate scheduledDate;
+
+    @Column(nullable = false)
+    private LocalTime scheduledTime;
 
     private LocalDateTime startTime;
 

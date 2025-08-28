@@ -11,6 +11,8 @@ import static org.example.backend.global.common.response.status.BaseExceptionRes
 
 @Getter
 public enum SwaggerResponseDescription {
+    MAIN(new LinkedHashSet<>(Set.of(ENTITY_NOT_FOUND))),
+
     REGISTER(new LinkedHashSet<>(Set.of(DUPLICATE_USERNAME))),
 
     LOGIN(new LinkedHashSet<>(Set.of(LOGIN_FAILED))),

@@ -2,24 +2,23 @@ package org.example.backend.domain.organization.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.backend.domain.organization.dto.GetOrganizationMeResponse;
 import org.example.backend.domain.organization.dto.PatchOrganizationMeRequest;
+import org.example.backend.domain.organization.dto.GetOrganziationMainResponse;
 import org.example.backend.domain.organization.dto.RegisterOrganizationRequest;
 import org.example.backend.domain.organization.service.OrganizationMeService;
+import org.example.backend.domain.organization.service.OrganizationMainService;
 import org.example.backend.domain.organization.service.RegisterOrganizationService;
-import org.example.backend.domain.volunteer.dto.GetVolunteerMeResponse;
-import org.example.backend.domain.volunteer.dto.PatchVolunteerMeRequest;
 import org.example.backend.global.auth.annotation.LoginUserId;
 import org.example.backend.global.common.response.BaseResponse;
 import org.example.backend.global.swagger.CustomExceptionDescription;
-import org.example.backend.global.swagger.SwaggerResponseDescription;
 import org.springframework.web.bind.annotation.*;
 
-import static org.example.backend.global.swagger.SwaggerResponseDescription.DEFAULT;
-import static org.example.backend.global.swagger.SwaggerResponseDescription.REGISTER;
+import static org.example.backend.global.swagger.SwaggerResponseDescription.*;
 
 @Tag(
         name = "Organization",
@@ -32,6 +31,7 @@ import static org.example.backend.global.swagger.SwaggerResponseDescription.REGI
 public class OrganizationController {
     private final RegisterOrganizationService registerOrganizationService;
     private final OrganizationMeService organizationMeService;
+    private final OrganizationMainService organizationMainService;
 
     @Operation(
             summary = "기관 회원가입 API",
@@ -65,5 +65,16 @@ public class OrganizationController {
             @RequestBody @jakarta.validation.Valid PatchOrganizationMeRequest request) {
         organizationMeService.patch(loginUserId, request);
         return new BaseResponse<>(null);
+    }
+
+    @Operation(
+            summary = "기관 홈화면 조회",
+            description = "기관의 홈화면을 조회하는 API"
+    )
+    @CustomExceptionDescription(MAIN)
+    @Parameter(in = ParameterIn.HEADER, required = true, name = "Authorization", description = "API 엑세스 토큰", example = "Bearer asdf1234")
+    @GetMapping("/main")
+    public BaseResponse<GetOrganziationMainResponse> getMain(@Parameter(hidden = true) @LoginUserId Long userId){
+        return new BaseResponse<>(organizationMainService.getMain(userId));
     }
 }
