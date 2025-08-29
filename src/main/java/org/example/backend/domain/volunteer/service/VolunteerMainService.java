@@ -16,6 +16,7 @@ import org.example.backend.domain.volunteer.dto.GetVolunteerMainResponse;
 import org.example.backend.domain.volunteer.model.Volunteer;
 import org.example.backend.domain.volunteer.repository.VolunteerRepository;
 import org.example.backend.global.common.exception.CustomException;
+import org.example.backend.global.util.AgeUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -87,6 +88,7 @@ public class VolunteerMainService {
                     return GetVolunteerMainResponse.SeniorDto.builder()
                             .seniorId(senior.getId())
                             .name(senior.getName())
+                            .age(AgeUtils.toAge(senior.getBirthday()))
                             .phone(senior.getPhone())
                             .schedule(scheduleDtos)
                             .notes(senior.getNotes())
