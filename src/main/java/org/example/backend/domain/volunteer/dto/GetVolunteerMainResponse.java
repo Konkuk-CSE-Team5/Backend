@@ -24,6 +24,9 @@ public record GetVolunteerMainResponse(
             @Schema(description = "어르신 성함", example = "김순자")
             String name,
 
+            @Schema(description = "나이", example = "70")
+            Integer age,
+
             @Schema(description = "전화번호", example = "010-1234-5678")
             String phone,
 
