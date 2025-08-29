@@ -11,6 +11,7 @@ import org.example.backend.domain.record.model.HealthLevel;
 import org.example.backend.domain.record.model.MentalityLevel;
 import org.example.backend.domain.record.model.Report;
 import org.example.backend.domain.record.model.VolunteerRecord;
+import org.example.backend.domain.record.model.VolunteerRecordStatus;
 import org.example.backend.domain.record.repository.CallHistoryRepository;
 import org.example.backend.domain.record.repository.ReportRepository;
 import org.example.backend.domain.record.repository.VolunteerRecordRepository;
@@ -64,10 +65,10 @@ public class VolunteerRecordService {
         LocalDate today = LocalDate.now();
         VolunteerRecord volunteerRecord = volunteerRecordRepository.findByMatchingAndScheduledDate(matching, today)
                 .orElseThrow(() -> new CustomException(BAD_REQUEST));
-        
+
         // 요청의 상태를 VolunteerRecord에 적용
         volunteerRecord.updateStatus(request.status());
-        
+
         // report 생성 또는 업데이트 (upsert)
         Report report = reportRepository.findByVolunteerRecord(volunteerRecord)
                 .map(existingReport -> {
@@ -146,7 +147,7 @@ public class VolunteerRecordService {
                             .records(records.stream()
                                     .map(r -> GetVolunteerRecordResponse.Record.builder()
                                             .recordId(r.getId())
-                                            .dateTime(r.getStartTime())
+                                            .dateTime(r.getVolunteerRecordStatus() == VolunteerRecordStatus.NOT_CONDUCTED ? LocalDateTime.of(r.getScheduledDate(), r.getScheduledTime()) : r.getStartTime())
                                             .duration(r.getTotalCallTime())
                                             .status(r.getVolunteerRecordStatus())
                                             .build()
@@ -186,7 +187,7 @@ public class VolunteerRecordService {
                 .records(allRecords.stream()
                         .map(r -> GetVolunteerRecordDetailResponse.Record.builder()
                                 .recordId(r.getId())
-                                .dateTime(r.getStartTime())
+                                .dateTime(r.getVolunteerRecordStatus() == VolunteerRecordStatus.NOT_CONDUCTED ? LocalDateTime.of(r.getScheduledDate(), r.getScheduledTime()) : r.getStartTime())
                                 .duration(r.getTotalCallTime())
                                 .status(r.getVolunteerRecordStatus())
                                 .build())
@@ -210,7 +211,7 @@ public class VolunteerRecordService {
 
         // 어르신 정보 조회
         Senior senior = record.getMatching().getSenior();
-        
+
         // 리포트 및 콜히스토리 조회
         Report report = record.getReport();
         List<CallHistory> callHistories = callHistoryRepository.findAllByVolunteerRecordOrderByStartTimeAsc(record);
@@ -258,7 +259,7 @@ public class VolunteerRecordService {
                         HealthLevel newHealth = request.health() != null ? request.health() : existingReport.getHealth();
                         MentalityLevel newMentality = request.mentality() != null ? request.mentality() : existingReport.getMentality();
                         String newOpinion = request.opinion() != null ? request.opinion() : existingReport.getOpinion();
-                        
+
                         existingReport.updateReport(newHealth, newMentality, newOpinion);
                         return existingReport;
                     })
@@ -304,7 +305,7 @@ public class VolunteerRecordService {
                 .records(records.stream()
                         .map(r -> GetVolunteerRecordByMatchingResponse.Record.builder()
                                 .recordId(r.getId())
-                                .dateTime(r.getStartTime())
+                                .dateTime(r.getVolunteerRecordStatus() == VolunteerRecordStatus.NOT_CONDUCTED ? LocalDateTime.of(r.getScheduledDate(), r.getScheduledTime()) : r.getStartTime())
                                 .duration(r.getTotalCallTime())
                                 .status(r.getVolunteerRecordStatus())
                                 .build())

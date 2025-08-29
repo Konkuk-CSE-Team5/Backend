@@ -6,6 +6,7 @@ import org.example.backend.domain.record.model.VolunteerRecord;
 import org.example.backend.domain.record.model.VolunteerRecordStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -74,5 +75,52 @@ public interface VolunteerRecordRepository extends JpaRepository<VolunteerRecord
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    // =====================================================
+    // Cron Job 관련 메서드들
+    // =====================================================
+
+    /**
+     * 오늘 날짜의 PENDING 레코드 중 endTime이 지난 것들 조회
+     * 
+     * JPQL에서 LocalTime 연산이 제한적이므로,
+     * scheduledTime이 현재 시간보다 이전인 경우로 단순화
+     * 실제 endTime 계산은 서비스 레이어에서 처리
+     */
+    @Query("""
+        select vr
+        from VolunteerRecord vr
+        where vr.volunteerRecordStatus = 'PENDING'
+          and vr.scheduledDate = :today
+          and vr.scheduledTime < :nowTime
+        """)
+    List<VolunteerRecord> findPendingRecordsWithExpiredEndTime(
+            @Param("today") LocalDate today,
+            @Param("nowTime") LocalTime nowTime
+    );
+
+    /**
+     * 과거 날짜의 PENDING 레코드들 조회
+     */
+    @Query("""
+        select vr
+        from VolunteerRecord vr
+        where vr.volunteerRecordStatus = 'PENDING'
+          and vr.scheduledDate < :today
+        """)
+    List<VolunteerRecord> findPendingRecordsWithPastDate(@Param("today") LocalDate today);
+
+    /**
+     * PENDING 레코드들을 NOT_CONDUCTED로 일괄 업데이트
+     */
+    @Modifying
+    @Query("""
+        update VolunteerRecord vr
+        set vr.volunteerRecordStatus = 'NOT_CONDUCTED',
+            vr.updatedAt = current_timestamp
+        where vr.id in :recordIds
+          and vr.volunteerRecordStatus = 'PENDING'
+        """)
+    int updatePendingRecordsToNotConducted(@Param("recordIds") List<Long> recordIds);
 
 }
